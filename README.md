@@ -48,34 +48,3 @@ npm run build
 ```
 #### 功能预览
 
-<table>
-	<tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/125654_a85872f7_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130140_14d04387_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130152_c96b3171_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130201_0db637b1_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130211_cd9ddb75_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130221_2a7981e9_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130230_f92ce88a_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130242_7a25f1e5_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130256_2874fa40_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130306_5d533140_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130317_8dabaced_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130326_da7b3fb4_791541.png"/></td>
-  </tr>
-  <tr>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130335_713a714d_791541.png"/></td>
-      <td><img src="https://images.gitee.com/uploads/images/2019/0328/130345_83f2bf83_791541.png"/></td>
-  </tr>                                                
-</table>
-# open-admin-ui
