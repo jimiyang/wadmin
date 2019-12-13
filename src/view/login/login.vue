@@ -33,10 +33,7 @@
     </div>
   </div>
 </template>
-
 <script>
-  import {mapActions} from 'vuex'
-
   export default {
     name: 'LoginForm',
     props: {
@@ -77,10 +74,6 @@
       }
     },
     methods: {
-      ...mapActions([
-        'handleLogin',
-        'getUserInfo'
-      ]),
       handleClick(type){
         let url = this.config[type]
         if (!url) return
@@ -94,31 +87,12 @@
         window.open(url, name, 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
       },
       handleSubmit () {
-				console.log(this.$config.homeName)
-        this.$refs.loginForm.validate((valid) => {
-          if (valid) {
-            this.loading = true
-            let username = this.form.username
-            let password = this.form.password
-            let auto = this.form.auto
-            this.$router.push({
-              name: this.$config.homeName
-            })
-            /*this.handleLogin({username, password, auto}).then(res => {
-              this.$router.push({
-                name: this.$config.homeName
-              })
-            }).finally(() =>{
-              this.loading = false
-            })*/
-          }
-        })
+				window.localStorage.setItem('token', '0BDDB8AF79083393D99D3E77AC65CD1F')
+				this.$router.push({
+				  name: this.$config.homeName
+				})
       }
-    },
-    mounted: function () {
     }
   }
 </script>
-<style>
 
-</style>

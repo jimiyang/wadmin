@@ -74,16 +74,8 @@ export default {
     },
     // 退出登录
     handleLogout ({ state, commit }) {
-      return new Promise((resolve, reject) => {
-        logout().then(res => {
-          commit('setToken', '')
-          commit('setAccess', [])
-          commit('setHasGetInfo', false)
-          resolve(res)
-        }).catch(err => {
-          reject(err)
-        })
-      })
+      //console.log(111)
+      //console.log(this.$router)
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {

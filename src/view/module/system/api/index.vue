@@ -458,8 +458,8 @@
       }
     },
     mounted: function () {
-      this.handleLoadServiceList()
-      this.handleSearch()
+      //this.handleLoadServiceList()
+      //this.handleSearch()
     }
   }
 </script>

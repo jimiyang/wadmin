@@ -63,7 +63,11 @@
           case 'logout':
             this.handleLogout().then(() => {
               // 地址栏重新刷新
-              location.reload()
+              //location.reload()
+              console.log(222)
+              this.$router.push({
+                name: 'login'
+              })
             })
             break
         }

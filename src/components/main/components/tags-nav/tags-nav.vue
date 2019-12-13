@@ -200,10 +200,10 @@ export default {
     setTimeout(() => {
       this.getTagElementByName(this.$route)
     }, 200)
+		//console.log(this.list)
   }
 }
 </script>
-
 <style lang="less">
 @import './tags-nav.less';
 </style>

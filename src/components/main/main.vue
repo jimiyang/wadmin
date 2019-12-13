@@ -102,7 +102,8 @@
   export default {
     name: 'Main',
     components: {
-      Layout, SideMenu,
+      Layout, 
+			SideMenu,
       HeaderBar,
       Language,
       TagsNav,
@@ -153,7 +154,7 @@
         return this.$store.state.user.avatarImgPath
       },
       userName () {
-        return '吉米羊吉米羊吉米羊吉米羊'
+        return '我是吉米小绵羊啊'
       },
       menuList () {
         return this.$store.getters.menuList
@@ -245,7 +246,7 @@
         })
         this.setBreadCrumb(newRoute)
         this.setTagNavList(getNewTagList(this.tagNavList, newRoute))
-        this.$refs['sideMenu'].updateOpenName(newRoute.name)
+        //this.$refs['sideMenu'].updateOpenName(newRoute.name)
       }
     },
     mounted () {
@@ -266,7 +267,7 @@
       })
       this.setBreadCrumb(this.$route)
       // 设置初始语言
-      this.setLocal(this.$i18n.locale)
+      //this.setLocal(this.$i18n.locale)
       // 如果当前打开页面不在标签栏中，跳到homeName页
       if (!this.tagNavList.find(item => item.name === this.$route.name)) {
         this.$router.push({

@@ -614,7 +614,7 @@
       }
     },
     mounted: function () {
-      this.handleSearch()
+      //this.handleSearch()
     }
   }
 </script>

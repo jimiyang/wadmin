@@ -32,7 +32,8 @@ export default [
     component: Main,
     meta: {
       hideInMenu: true,
-      notCache: true
+      notCache: true,
+			requireAuth: true // 判断是否需要登录
     },
     children: [
       {
@@ -42,7 +43,8 @@ export default [
           hideInMenu: true,
           title: '首页',
           notCache: true,
-          icon: 'md-home'
+          icon: 'md-home',
+					requireAuth: true // 判断是否需要登录
         },
         component: () => import('@/view/home')
       }

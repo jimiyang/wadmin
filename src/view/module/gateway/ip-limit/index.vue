@@ -47,7 +47,7 @@
           <TabPane label="策略信息" name="form1">
             <Form ref="form1" v-show="current=='form1'" :model="formItem" :rules="formItemRules" :label-width="100">
               <FormItem label="策略名称" prop="policyName">
-                <Input v-model="formItem.policyName" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.policyName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="策略类型" prop="policyType">
                 <Select v-model="formItem.policyType">
@@ -57,8 +57,8 @@
               </FormItem>
               <FormItem label="IP地址/域名" prop="ipAddress">
                 <Input v-model="formItem.ipAddress" type="textarea"
-                       placeholder="192.168.0.1;192.168.0.2;baidu.com;weixin.com"></Input> 同时支持Ip和域名,多个用分号";"隔开。示例：192.168.0.1;baidu.com;weixin.com
-
+                  placeholder="192.168.0.1;192.168.0.2;baidu.com;weixin.com" />
+                  同时支持Ip和域名,多个用分号";"隔开。示例：192.168.0.1;baidu.com;weixin.com
               </FormItem>
             </Form>
           </TabPane>
