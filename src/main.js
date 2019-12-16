@@ -16,7 +16,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import TreeTable from 'tree-table-vue'
 import Treeselect from '@riophae/vue-treeselect'
 import 'highlight.js/styles/googlecode.css' //样式文件
+import VueQuillEditor from "vue-quill-editor"; //富文本编辑器 
+import 'quill/dist/quill.core.css'; 
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
 Vue.use(iView)
+Vue.use(VueQuillEditor)
 Vue.component(TreeTable.name, TreeTable)
 // 注册组件
 Vue.component('treeselect', Treeselect)

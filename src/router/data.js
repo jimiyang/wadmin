@@ -3,27 +3,49 @@ import Main from '@/components/main'
 export default [
 	{
 		text: '系统管理',
-		type: 'el-icon-folder',
+		type: 'md-albums',
 		children: [
 			{
-				type: 'el-icon-files',
+				type: 'md-menu',
 				name: 't1',
 				text: '菜单资源'
 			},
 			{
-				type: 'el-icon-receiving',
+				type: 'ios-folder',
 				name: 't2',
 				text: '角色信息'
 			},
 			{
-				type: 'el-icon-chat-dot-square',
+				type: 'ios-contacts',
 				name: 't3',
 				text: '应用信息'
 			},
 			{
-				type: 'el-icon-setting',
+				type: 'md-cog',
 				name: 't4',
 				text: '系统用户'
+			},
+			{
+				type: 'logo-xbox',
+				name: 'product',
+				text: '产品模板',
+				children: [
+				  {
+					path: 'list',
+					name: 'list',
+					text: '模板列表'
+				  },
+				  {
+					path: 'add',
+					name: 'add',
+					text: '创建模板'
+				  }
+				]
+			},
+			{
+				type: 'md-cube',
+				name: 'activity',
+				text: '活动模板'
 			},
 		]
 	}

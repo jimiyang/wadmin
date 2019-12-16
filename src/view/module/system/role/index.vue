@@ -2,9 +2,10 @@
   <div>
     <Card shadow>
       <Form ref="searchForm"
-            :model="pageInfo"
-            inline
-            :label-width="80">
+        :model="pageInfo"
+        inline
+        :label-width="80"
+      >
         <FormItem label="角色名称" prop="roleName">
           <Input type="text" v-model="pageInfo.roleName" placeholder="请输入关键字"/>
         </FormItem>
@@ -18,7 +19,7 @@
       </Form>
       <div class="search-con search-con-top">
         <ButtonGroup>
-          <Button :disabled="hasAuthority('systemRoleEdit')?false:true" class="search-btn" type="primary"
+          <Button  class="search-btn" type="primary"
                   @click="handleModal()">
             <span>添加</span>
           </Button>
@@ -49,10 +50,12 @@
             @on-change="handlePage" @on-page-size-change='handlePageSize'></Page>
     </Card>
 
-    <Modal v-model="modalVisible"
-           :title="modalTitle"
-           width="40"
-           @on-cancel="handleReset">
+    <Modal
+      v-model="modalVisible"
+      :title="modalTitle"
+      width="50"
+      @on-cancel="handleReset"
+    >
       <div>
         <Tabs @on-click="handleTabClick" :value="current">
           <TabPane label="角色信息" name="form1">
@@ -74,7 +77,7 @@
               </FormItem>
             </Form>
           </TabPane>
-          <TabPane :disabled="!formItem.roleId" label="分配权限" name="form2">
+          <TabPane label="分配权限" name="form2">
             <Form v-show="current == 'form2'" ref="form2" :model="formItem" :rules="formItemRules" :label-width="100">
               <FormItem label="过期时间" prop="expireTime">
                 <Badge v-if="formItem.isExpired" text="授权已过期">
@@ -105,7 +108,7 @@
               </FormItem>
             </Form>
           </TabPane>
-          <TabPane :disabled="!formItem.roleId" label="角色成员" name="form3">
+          <TabPane label="角色成员" name="form3">
             <Form v-show="current == 'form3'" ref="form3" :model="formItem" :rules="formItemRules">
               <FormItem prop="authorities">
                 <Transfer

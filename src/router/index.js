@@ -74,6 +74,28 @@ const asyncRoutes = [
 					requireAuth: true
 				},
 				component: () => import('@/view/module/system/user/index.vue')
+			},
+			{
+			  path: 'product',
+			  name: 'product',
+			  meta: {
+				requireAuth: true
+			  },
+			  component: () => import('@/view/module/product/index.vue')
+			},
+			{
+			  path: 'add',
+			  name: 'add',
+			  component: () => import('@/view/module/product/add/add.vue')
+			},
+			{
+				path: 'activity',
+				name: 'activity',
+				meta: {
+					requireAuth: true,
+					title: '活动',
+				},
+				component: () => import('@/view/module/activity/index.vue')
 			}
 		]
   }
