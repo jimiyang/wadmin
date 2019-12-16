@@ -99,7 +99,7 @@
                   :data="selectMenus">
                   <template slot="operation" slot-scope="scope">
                     <CheckboxGroup v-model="formItem.grantActions">
-                      <Checkbox v-for="item in scope.row.actionList" :label="item.authorityId">
+                      <Checkbox v-for="item in actionList" :label="item.authorityId">
                         <span :title="item.actionDesc">{{item.actionName}}</span>
                       </Checkbox>
                     </CheckboxGroup>
@@ -167,7 +167,10 @@
           'form3'
         ],
         selectApis: [],
-        selectMenus: [],
+        selectMenus: [
+          {id: 1, menuName: 'KKKKey'},
+          {id: 2, menuName: '斤斤计较'}
+        ],
         selectUsers: [],
         pageInfo: {
           total: 0,
@@ -184,6 +187,10 @@
             {required: true, message: '角色名称不能为空', trigger: 'blur'}
           ]
         },
+        actionList: [
+          {actionDesc: 'aaa',authorityId: 1,actionName: '哈哈哈哈'},
+          {actionDesc: 'aaa',authorityId: 2,actionName: '呵呵呵呵呵'}
+        ],
         formItem: {
           roleId: '',
           roleCode: '',
@@ -527,6 +534,7 @@
     },
     mounted: function () {
       //this.handleSearch()
+      //console.log(this.actionList)
     }
   }
 </script>
