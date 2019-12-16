@@ -61,10 +61,10 @@
           <TabPane label="角色信息" name="form1">
             <Form v-show="current == 'form1'" ref="form1" :model="formItem" :rules="formItemRules" :label-width="100">
               <FormItem label="角色标识" prop="roleCode">
-                <Input v-model="formItem.roleCode" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.roleCode" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="角色名称" prop="roleName">
-                <Input v-model="formItem.roleName" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.roleName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="状态">
                 <RadioGroup v-model="formItem.status" type="button">
@@ -73,7 +73,7 @@
                 </RadioGroup>
               </FormItem>
               <FormItem label="描述">
-                <Input v-model="formItem.roleDesc" type="textarea" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.roleDesc" type="textarea" placeholder="请输入内容" />
               </FormItem>
             </Form>
           </TabPane>
@@ -97,9 +97,9 @@
                   :selectable="true"
                   :columns="columns2"
                   :data="selectMenus">
-                  <template slot="operation" slot-scope="scope">
+                  <template slot="operation">
                     <CheckboxGroup v-model="formItem.grantActions">
-                      <Checkbox v-for="item in actionList" :label="item.authorityId">
+                      <Checkbox v-for="(item, index) in actionList" :label="item.authorityId" :key="index">
                         <span :title="item.actionDesc">{{item.actionName}}</span>
                       </Checkbox>
                     </CheckboxGroup>

@@ -69,7 +69,7 @@
           <TabPane label="应用信息" name="form1">
             <Form ref="form1" v-show="current=='form1'" :model="formItem" :rules="formItemRules" :label-width="135">
               <FormItem label="应用图标">
-                <div class="upload-list" v-for="item in uploadList">
+                <div class="upload-list" v-for="(item, index) in uploadList" :key="index">
                   <template v-if="item.status === 'finished'">
                     <img :src="item.url">
                     <div class="upload-list-cover">
@@ -100,21 +100,27 @@
                 </Upload>
               </FormItem>
               <FormItem label="AppId">
-                <Input disabled v-model="formItem.appId" placeholder="请输入内容"></Input>
+                <Input disabled v-model="formItem.appId" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="开发者">
                 <Select v-model="formItem.developerId" filterable clearable>
-                  <Option :title="item.userName" v-for="item in selectUsers" @click.native="handleOnSelectUser(item)"
-                          :value="item.userId" :label="item.userName">
+                  <Option
+                    :title="item.userName"
+                    v-for="(item, index) in selectUsers"
+                    @click.native="handleOnSelectUser(item)"
+                    :value="item.userId"
+                    :label="item.userName"
+                    :key="index"
+                  >
                     <span>{{ item.userName }}</span>
                   </Option>
                 </Select>
               </FormItem>
               <FormItem label="应用名称" prop="appName">
-                <Input v-model="formItem.appName" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.appName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="英文名称" prop="appNameEn">
-                <Input v-model="formItem.appNameEn" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.appNameEn" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="应用类型" prop="appType">
                 <Select v-model="formItem.appType" @on-change="handleOnAppTypeChange">
@@ -137,7 +143,7 @@
                 </RadioGroup>
               </FormItem>
               <FormItem label="应用官网" prop="website">
-                <Input v-model="formItem.website" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.website" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="状态">
                 <RadioGroup v-model="formItem.status" type="button">
@@ -146,21 +152,21 @@
                 </RadioGroup>
               </FormItem>
               <FormItem label="描述">
-                <Input v-model="formItem.appDesc" type="textarea" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.appDesc" type="textarea" placeholder="请输入内容" />
               </FormItem>
             </Form>
           </TabPane>
           <TabPane :disabled="!formItem.appId" label="开发信息" name="form2">
             <Form ref="form2" v-show="current=='form2'" :model="formItem" :rules="formItemRules" :label-width="135">
               <FormItem label="ApiKey">
-                <Input disabled v-model="formItem.apiKey" placeholder="请输入内容"></Input>
+                <Input disabled v-model="formItem.apiKey" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="SecretKey">
-                <Input disabled v-model="formItem.secretKey" placeholder="请输入内容"></Input>
+                <Input disabled v-model="formItem.secretKey" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="授权类型" prop="grantTypes">
                 <CheckboxGroup v-model="formItem.grantTypes">
-                  <Tooltip :content="item.desc" v-for="item in selectGrantTypes">
+                  <Tooltip :content="item.desc" v-for="(item, index) in selectGrantTypes" :key="index">
                     <Checkbox :label="item.label"><span>{{ item.title }}</span></Checkbox>
                   </Tooltip>
                 </CheckboxGroup>
@@ -172,7 +178,7 @@
             </Tooltip>
             </span>
                 <CheckboxGroup v-model="formItem.scopes">
-                  <Checkbox v-for="item in selectScopes" :label="item.label"><span>{{ item.title }}</span>
+                  <Checkbox v-for="(item, index) in selectScopes" :key="index" :label="item.label"><span>{{ item.title }}</span>
                   </Checkbox>
                 </CheckboxGroup>
               </FormItem>
@@ -183,7 +189,7 @@
             </Tooltip>
             </span>
                 <CheckboxGroup v-model="formItem.autoApproveScopes">
-                  <Checkbox v-for="item in selectScopes" :label="item.label"><span>{{ item.title }}</span>
+                  <Checkbox v-for="(item, index) in selectScopes" :key="index" :label="item.label"><span>{{ item.title }}</span>
                   </Checkbox>
                 </CheckboxGroup>
               </FormItem>
@@ -202,7 +208,7 @@
                 <span>&nbsp;&nbsp;秒</span>
               </FormItem>
               <FormItem label="第三方登陆回调地址" prop="redirectUrls">
-                <Input v-model="formItem.redirectUrls" type="textarea" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.redirectUrls" type="textarea" placeholder="请输入内容" />
                 <span>多个地址使用,逗号隔开</span>
               </FormItem>
             </Form>

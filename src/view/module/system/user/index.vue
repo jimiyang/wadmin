@@ -68,22 +68,22 @@
                 </RadioGroup>
               </FormItem>
               <FormItem label="昵称" prop="nickName">
-                <Input v-model="formItem.nickName" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.nickName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="登录名" prop="userName">
-                <Input :disabled="formItem.userId?true:false" v-model="formItem.userName" placeholder="请输入内容"></Input>
+                <Input :disabled="formItem.userId?true:false" v-model="formItem.userName" placeholder="请输入内容" />
               </FormItem>
               <FormItem v-if="formItem.userId?false:true" label="登录密码" prop="password">
-                <Input type="password" v-model="formItem.password" placeholder="请输入内容"></Input>
+                <Input type="password" v-model="formItem.password" placeholder="请输入内容" />
               </FormItem>
               <FormItem v-if="formItem.userId?false:true" label="再次确认密码" prop="passwordConfirm">
-                <Input type="password" v-model="formItem.passwordConfirm" placeholder="请输入内容"></Input>
+                <Input type="password" v-model="formItem.passwordConfirm" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="邮箱" prop="email">
-                <Input v-model="formItem.email" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.email" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="手机号" prop="mobile">
-                <Input v-model="formItem.mobile" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.mobile" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="状态">
                 <RadioGroup v-model="formItem.status" type="button">
@@ -93,7 +93,7 @@
                 </RadioGroup>
               </FormItem>
               <FormItem label="描述">
-                <Input v-model="formItem.userDesc" type="textarea" placeholder="请输入内容"></Input>
+                <Input v-model="formItem.userDesc" type="textarea" placeholder="请输入内容" />
               </FormItem>
             </Form>
           </TabPane>
@@ -101,7 +101,7 @@
             <Form v-show="current == 'form2'" ref="form2" :model="formItem" :label-width="100" :rules="formItemRules">
               <FormItem label="分配角色" prop="grantRoles">
                 <CheckboxGroup v-model="formItem.grantRoles">
-                  <Checkbox v-for="item in selectRoles" :label="item.roleId"><span>{{ item.roleName }}</span></Checkbox>
+                  <Checkbox v-for="(item, index) in selectRoles" :key="index" :label="item.roleId"><span>{{ item.roleName }}</span></Checkbox>
                 </CheckboxGroup>
               </FormItem>
             </Form>
@@ -130,7 +130,7 @@
                   :data="selectMenus">
                   <template slot="operation" slot-scope="scope">
                     <CheckboxGroup v-model="formItem.grantActions">
-                      <Checkbox :disabled="item.disabled" v-for="item in scope.row.actionList" :label="item.authorityId">
+                      <Checkbox :disabled="item.disabled" v-for="(item, index) in scope.row.actionList"  :key="index" :label="item.authorityId">
                         <span :title="item.actionDesc">{{item.actionName}}</span>
                       </Checkbox>
                     </CheckboxGroup>
@@ -142,13 +142,13 @@
           <TabPane :disabled="!formItem.userId" label="修改密码" name="form4">
             <Form v-show="current == 'form4'" ref="form4" :model="formItem" :rules="formItemRules" :label-width="100">
               <FormItem label="登录名" prop="userName">
-                <Input :disabled="formItem.userId?true:false" v-model="formItem.userName" placeholder="请输入内容"></Input>
+                <Input :disabled="formItem.userId?true:false" v-model="formItem.userName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="登录密码" prop="password">
-                <Input type="password" v-model="formItem.password" placeholder="请输入内容"></Input>
+                <Input type="password" v-model="formItem.password" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="再次确认密码" prop="passwordConfirm">
-                <Input type="password" v-model="formItem.passwordConfirm" placeholder="请输入内容"></Input>
+                <Input type="password" v-model="formItem.passwordConfirm" placeholder="请输入内容" />
               </FormItem>
             </Form>
           </TabPane>
