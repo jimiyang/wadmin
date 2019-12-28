@@ -31,10 +31,10 @@ export default [
     redirect: '/home',
     component: Main,
     meta: {
-      hideInMenu: true,
-      notCache: true,
-			requireAuth: true // 判断是否需要登录
+      icon: '11'
+			//requireAuth: true // 判断是否需要登录
     },
+    component: () => import('@/components/main'),
     children: [
       {
         path: '/home',
@@ -114,5 +114,13 @@ export default [
       hideInMenu: true
     },
     component: () => import('@/view/error-page/500.vue')
-  }
+  },
+	{
+	  path: '*',
+	  name: 'error_404',
+	  meta: {
+	    hideInMenu: true
+	  },
+	  component: () => import('@/view/error-page/404.vue')
+	}
 ]

@@ -1,6 +1,6 @@
 
 import { setToken, getToken } from '@/libs/util'
-
+import {login} from '@/api/login'
 export default {
   state: {
     userName: '',
@@ -31,9 +31,9 @@ export default {
     setAccess (state, access) {
       state.access = access
     },
-    setToken (state, { token, auto }) {
+    setToken (state, { token}) {
       state.token = token
-      setToken(token, auto)
+      setToken(token)
     },
     setHasGetInfo (state, status) {
       state.hasGetInfo = status
@@ -49,11 +49,14 @@ export default {
     },
     setUserDesc (state, userDesc) {
       state.userDesc = userDesc
-    }
+    },
+		setPermissionVos (state, permissionVos) {
+		  state.setPermissionVos = permissionVos
+		}
   },
   actions: {
-    // 登录
-    handleLogin ({ commit }, { username, password, auto }) {
+    // 登录 获取用户信息
+    handleLogin ({ commit }, { username, password}) {
       username = username.trim()
       return new Promise((resolve, reject) => {
         login({
@@ -61,11 +64,17 @@ export default {
           password
         }).then(res => {
           if (res) {
-            if (res.code === 0) {
-              let token = res.data.access_token
-              commit('setToken', { token, auto })
+              let token = res.data.accessToken
+              commit('setToken', { token}) //token
+							commit('setAvatar', res.data.headImage) //头像
+							commit('setUserName', res.data.username) // 用户名
+							commit('setNickName', res.data.nickname) //昵称
+							commit('setUserId', res.data.id)
+							commit('setEmail', res.data.email) //邮箱
+							commit('setMobile', res.data.phone) //手机号
+							//commit('setUserDesc', res.data.userDesc)
+							commit('setUserMenus', res.data.permissionVos) //用户登录所创建菜单
               resolve(res)
-            }
           }
         }).catch(err => {
           reject(err)
@@ -76,43 +85,6 @@ export default {
     handleLogout ({ state, commit }) {
       //console.log(111)
       //console.log(this.$router)
-    },
-    // 获取用户相关信息
-    getUserInfo ({ state, commit }) {
-      return new Promise((resolve, reject) => {
-        getUserInfo().then(res => {
-          if (res.code === 0) {
-            commit('setAvatar', res.data.avatar)
-            commit('setUserName', res.data.username)
-            commit('setNickName', res.data.nickName)
-            commit('setUserId', res.data.userId)
-            commit('setEmail', res.data.email)
-            commit('setMobile', res.data.mobile)
-            commit('setUserDesc', res.data.userDesc)
-            const access = []
-            if (res.data.authorities) {
-              res.data.authorities.map(item => {
-                if (item.authority) {
-                  access.push(item.authority)
-                }
-              })
-            }
-            // 转换权限
-            commit('setAccess', access)
-            commit('setHasGetInfo', true)
-            getCurrentUserMenu().then(res => {
-              if (res.code === 0) {
-                commit('setUserMenus', res.data)
-                resolve(state)
-              }
-            }).catch(err => {
-              reject(err)
-            })
-          }
-        }).catch(err => {
-          reject(err)
-        })
-      })
     }
   }
 }

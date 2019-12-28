@@ -128,23 +128,23 @@
           <FormItem label="服务名称" prop="serviceId">
             <Select :disabled="formItem.apiId && formItem.isPersist === 1?true:false" v-model="formItem.serviceId"
                     filterable clearable>
-              <Option v-for="item in selectServiceList" :value="item.serviceId">{{ item.serviceName }}</Option>
+              <Option v-for="(item, index) in selectServiceList" :key="index" :value="item.serviceId">{{ item.serviceName }}</Option>
             </Select>
           </FormItem>
           <FormItem label="接口分类" prop="apiCategory">
-            <Input v-model="formItem.apiCategory" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.apiCategory" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="接口编码" prop="apiCode">
             <Input :disabled="formItem.apiId && formItem.isPersist === 1?true:false" v-model="formItem.apiCode"
-                   placeholder="请输入内容"></Input>
+                   placeholder="请输入内容" />
           </FormItem>
           <FormItem label="接口名称" prop="apiName">
             <Input :disabled="formItem.apiId && formItem.isPersist === 1?true:false" v-model="formItem.apiName"
-                   placeholder="请输入内容"></Input>
+                   placeholder="请输入内容" />
           </FormItem>
           <FormItem label="请求地址" prop="path">
             <Input :disabled="formItem.apiId && formItem.isPersist === 1?true:false" v-model="formItem.path"
-                   placeholder="请输入内容"></Input>
+                   placeholder="请输入内容" />
           </FormItem>
           <FormItem label="优先级">
             <InputNumber v-model="formItem.priority"></InputNumber>
@@ -172,7 +172,7 @@
             <p><code>禁用：提示"请求地址,禁止访问!";维护中：提示"正在升级维护中,请稍后再试!";</code></p>
           </FormItem>
           <FormItem label="描述">
-            <Input v-model="formItem.apiDesc" type="textarea" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.apiDesc" type="textarea" placeholder="请输入内容" />
           </FormItem>
         </Form>
         <div class="drawer-footer">

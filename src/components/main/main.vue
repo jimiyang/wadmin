@@ -154,7 +154,7 @@
         return this.$store.state.user.avatarImgPath
       },
       userName () {
-        return '我是吉米小绵羊啊'
+        return this.$store.state.user.userName //'我是吉米小绵羊啊'
       },
       menuList () {
         return this.$store.getters.menuList

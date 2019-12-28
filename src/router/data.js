@@ -1,51 +1,50 @@
-import Main from '@/components/main'
 // 左侧菜单栏数据 
 export default [
 	{
-		text: '系统管理',
+		name: '系统管理',
 		type: 'md-albums',
 		children: [
 			{
 				type: 'md-menu',
-				name: 't1',
-				text: '菜单资源'
+				urlPath: '/system',
+				name: '菜单资源',
 			},
 			{
 				type: 'ios-folder',
-				name: 't2',
-				text: '角色信息'
+				urlPath: 'company',
+				name: '公司管理'
 			},
 			{
-				type: 'ios-contacts',
-				name: 't3',
-				text: '应用信息'
+				type: 'ios-folder',
+				urlPath: 't2',
+				name: '角色信息'
 			},
 			{
 				type: 'md-cog',
-				name: 't4',
-				text: '系统用户'
+				urlPath: 't4',
+				name: '系统用户'
 			},
 			{
 				type: 'logo-xbox',
-				name: 'product',
-				text: '产品模板',
+				urlPath: 'product',
+				name: '产品模板',
 				children: [
 				  {
-					path: 'list',
+					urlPath: 'list',
 					name: 'list',
-					text: '模板列表'
+					name: '模板列表'
 				  },
 				  {
-					path: 'add',
+					urlPath: 'add',
 					name: 'add',
-					text: '创建模板'
+					name: '创建模板'
 				  }
 				]
 			},
 			{
 				type: 'md-cube',
-				name: 'activity',
-				text: '活动模板'
+				urlPath: 'activity',
+				name: '活动模板'
 			},
 		]
 	}

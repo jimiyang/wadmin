@@ -3,7 +3,6 @@
     <div class="search-con search-con-top">
       <ButtonGroup>
         <Button
-          :disabled="value.menuId && value.menuId!=='0' && !value.hasChild && hasAuthority('systemMenuEdit')?false:true"
           class="search-btn" type="primary" @click="handleModal()">
           <span>添加功能按钮</span>
         </Button>

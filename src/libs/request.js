@@ -1,10 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import $config from '@/config'
-import {getToken} from '@/libs/util'
-import {Message} from 'iview'
-import {sign} from '@/libs/sign'
-
+import {Message} from 'view-design'
 let baseUrl = ''
 switch (process.env.NODE_ENV) {
   case 'development':
@@ -16,7 +13,6 @@ switch (process.env.NODE_ENV) {
     baseUrl = $config.apiUrl.pro
     break
 }
-
 /**
  * 创建axios实例
  * @type {AxiosInstance}
@@ -27,22 +23,20 @@ const service = axios.create({
   // 设置请求超时时间30s
   timeout: 30000
 })
-
 service.apiUrl = baseUrl
-
 /**
  * 请求参数处理
  */
 service.interceptors.request.use((config) => {
     // 参数签名处理
-    config = sign(config, $config.appId, $config.appSecret, 'SHA256')
+    /*config = sign(config, $config.appId, $config.appSecret, 'SHA256')
     config.method === 'get'
       ? config.params = {...config.params} : config.data = qs.stringify({...config.data})
 
     const token = getToken()
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token
-    }
+    }*/
     return config
   }
 )
@@ -51,9 +45,9 @@ service.interceptors.request.use((config) => {
  */
 service.interceptors.response.use(
   (response) => {
-    if (response.data.code === 0) {
+		//console.log(response)
+    if (response.data.code === 200) {
       // 服务端定义的响应code码为0时请求成功
-      // 使用Promise.resolve 正常响应
       return Promise.resolve(response.data)
     } else {
       // 使用Promise.reject 响应
@@ -87,5 +81,46 @@ service.interceptors.response.use(
     }
   }
 )
-
-export default service
+export default {
+	post(url, data, header) {
+		/*let form = null
+		switch(url) {
+			case 'check/picVerify':
+			break
+			default:
+			  const token = window.localStorage.getItem('token')
+			  form = data !== undefined ? Object.assign(data, {token}) : {token}
+			break
+		}
+		console.log(form)*/
+		return service({
+			method: 'post',
+      url,
+      //headers: {
+        //'content-type': 'application/json;charset=UTF-8'
+      //},
+      data  //: qs.stringify(data)
+		})
+  },
+  get(url, data) {
+		return service({
+			method: 'get',
+      url,
+      params: data
+		})
+  },
+  delete(url, data) {
+		return service({
+			method: 'delete',
+      url,
+      data: qs.stringify(data)
+		})
+  },
+  put(url, data) {
+		return service({
+			method: 'PUT',
+      url,
+      data: qs.stringify(data)
+		})
+  },
+}

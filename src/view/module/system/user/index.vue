@@ -22,8 +22,7 @@
 
       <div class="search-con search-con-top">
         <ButtonGroup>
-          <Button :disabled="hasAuthority('systemUserEdit')?false:true" type="primary"
-                  @click="handleModal()">
+          <Button type="primary" @click="handleModal()">
             <span>添加</span>
           </Button>
         </ButtonGroup>
@@ -97,7 +96,7 @@
               </FormItem>
             </Form>
           </TabPane>
-          <TabPane :disabled="!formItem.userId" label="分配角色" name="form2">
+          <TabPane label="分配角色" name="form2">
             <Form v-show="current == 'form2'" ref="form2" :model="formItem" :label-width="100" :rules="formItemRules">
               <FormItem label="分配角色" prop="grantRoles">
                 <CheckboxGroup v-model="formItem.grantRoles">
@@ -106,7 +105,7 @@
               </FormItem>
             </Form>
           </TabPane>
-          <TabPane :disabled="!formItem.userId" label="分配权限" name="form3">
+          <TabPane label="分配权限" name="form3">
             <Alert type="info" show-icon>
               支持用户单独分配功能权限<code>(除角色已经分配菜单功能,禁止勾选!)</code></Alert>
             <Form v-show="current == 'form3'" ref="form3" :model="formItem" :rules="formItemRules" :label-width="100">
@@ -139,7 +138,7 @@
               </FormItem>
             </Form>
           </TabPane>
-          <TabPane :disabled="!formItem.userId" label="修改密码" name="form4">
+          <TabPane label="修改密码" name="form4">
             <Form v-show="current == 'form4'" ref="form4" :model="formItem" :rules="formItemRules" :label-width="100">
               <FormItem label="登录名" prop="userName">
                 <Input :disabled="formItem.userId?true:false" v-model="formItem.userName" placeholder="请输入内容" />
@@ -161,11 +160,9 @@
     </Modal>
   </div>
 </template>
-
 <script>
   import {startWith, listConvertTree} from '@/libs/util'
-
-
+  import {getUserList} from '@/api/user'
   export default {
     name: 'SystemUser',
     data() {
@@ -497,9 +494,10 @@
           this.pageInfo.page = page
         }
         this.loading = true
-        getUsers(this.pageInfo).then(res => {
-          this.data = res.data.records
-          this.pageInfo.total = parseInt(res.data.total)
+        getUserList(this.pageInfo).then(res => {
+          console.log(res)
+          //this.data = res.data.records
+          //this.pageInfo.total = parseInt(res.data.total)
         }).finally(() => {
           this.loading = false
         })
@@ -510,7 +508,7 @@
       },
       handleLoadUserGranted(userId) {
         const that = this
-        const p1 = getAuthorityMenu()
+        //const p1 = getAuthorityMenu()
         const p2 = getAuthorityUser(userId)
         const roleAuthorites = []
         Promise.all([p1, p2]).then(function (values) {
@@ -614,7 +612,7 @@
       }
     },
     mounted: function () {
-      //this.handleSearch()
+     // this.handleSearch()
     }
   }
 </script>

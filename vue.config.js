@@ -1,10 +1,8 @@
 const path = require('path')
 const config = require('./src/config')
-
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
-
 let BASE_URL = ''
 switch (process.env.NODE_ENV) {
   case 'development':
@@ -39,9 +37,16 @@ module.exports = {
     }
   },
   // 打包时不生成.map文件
-  productionSourceMap: false
+  productionSourceMap: false,
   // 这里写你调用接口的基础路径，来解决跨域，如果设置了代理，那你本地开发环境的axios的baseUrl要写为 '' ，即空字符串
-  // devServer: {
-  //   proxy: 'localhost:3000'
-  // }
+	//http://119.23.8.51:8773/api-admin/api/login
+	devServer: {
+		proxy: { //代理请求到其他服务器
+			'/base': {
+				target: 'http://119.23.8.51:8773',
+				pathRewrite: { '^/base': '' },
+				changeOrigin: true
+			}	
+		}
+	}
 }

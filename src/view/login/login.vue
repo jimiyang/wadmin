@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+  import {login} from '@/api/login'
+  import {mapActions} from 'vuex'
   export default {
     name: 'LoginForm',
     props: {
@@ -41,7 +43,7 @@
         type: Array,
         default: () => {
           return [
-            {required: true, message: '账号不能为空', trigger: 'blur'}
+            {required: true, message: '登录名不能为空', trigger: 'blur'}
           ]
         }
       },
@@ -58,10 +60,10 @@
       return {
         loading:false,
         form: {
-          username: '',
-          password: '',
-          auto: true,
+          username: 'admin',
+          password: '123456'
         },
+				authCode: null,
         config: {}
       }
     },
@@ -73,7 +75,18 @@
         }
       }
     },
+		created() {
+			/*picVerify().then(rs => {
+				if(rs.success) {
+					this.authCode = rs.data.authCode
+					this.picUniqueToken = rs.data.picUniqueToken
+				}
+			})*/
+		},
     methods: {
+      ...mapActions([
+        'handleLogin'
+      ]),
       handleClick(type){
         let url = this.config[type]
         if (!url) return
@@ -87,10 +100,21 @@
         window.open(url, name, 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
       },
       handleSubmit () {
-				window.localStorage.setItem('token', '0BDDB8AF79083393D99D3E77AC65CD1F')
-				this.$router.push({
-				  name: this.$config.homeName
-				})
+				this.$refs.loginForm.validate((valid) => {
+          if (valid) {
+						let username = this.form.username,
+                password = this.form.password
+            this.handleLogin({username, password}).then(rs => {
+            	if(rs) {
+            		/*window.localStorage.setItem('token', rs.data.token);
+                window.localStorage.setItem('userInfo', JSON.stringify(rs.data));*/
+            		this.$router.push({
+            		  path: this.$config.homeName
+            		})
+            	}
+            })
+          }
+        })
       }
     }
   }

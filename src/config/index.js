@@ -32,7 +32,7 @@ module.exports = {
    */
   apiUrl: {
     //  本地环境接口请求地址
-    dev: 'http://localhost:8888',
+    dev: 'base/',
     //  生产环境接口请求地址
     pro: 'http://api.openc.top'
   },

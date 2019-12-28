@@ -4,6 +4,8 @@ import routes from './routers'
 import store from '@/store'
 import iView from 'iview'
 import config from '@/config'
+import { setToken, getToken, getMenuByRouter} from '@/libs/util'
+import asyncRoutes from './asyncRouters.js'
 const { homeName } = config
 Vue.use(Router)
 // 存放加载的动态路由
@@ -19,87 +21,12 @@ switch (process.env.NODE_ENV) {
     break
 }
 const router = new Router({
-  //base: BASE_URL,
+  base: BASE_URL,
   routes: routes,
-  mode: 'history'
+  //mode: 'history'
 })
 const LOGIN_PAGE_NAME = 'login'
-const asyncRoutes = [
-	{
-	  path: '/login',
-	  name: 'login',
-	  meta: {
-	    title: 'Login - 登录',
-	    hideInMenu: true
-	  },
-	  component: () => import('@/view/login/login.vue')
-	},
-	{
-		path: '/',
-		//name: '_home',
-		redirect: '/home',
-		meta: {
-			requireAuth: true
-		},
-	  component: resolve => require(['@/components/main'], resolve),
-	  children: [
-			{
-				path: 't1',
-				name: 't1',
-				meta: {
-					requireAuth: true
-				},
-				component: () => import('@/view/module/system/menus/index.vue')
-			 },
-			{
-				path: 't2',
-				name: 't2',
-				meta: {
-					requireAuth: true
-				},
-				component: () => import('@/view/module/system/role/index.vue')
-			},
-			{
-				path: 't3',
-				name: 't3',
-				meta: {
-					requireAuth: true
-				},
-				component: () => import('@/view/module/system/api/index.vue')
-			},
-			{
-				path: 't4',
-				name: 't4',
-				meta: {
-					requireAuth: true
-				},
-				component: () => import('@/view/module/system/user/index.vue')
-			},
-			{
-			  path: 'product',
-			  name: 'product',
-			  meta: {
-				requireAuth: true
-			  },
-			  component: () => import('@/view/module/product/index.vue')
-			},
-			{
-			  path: 'add',
-			  name: 'add',
-			  component: () => import('@/view/module/product/add/add.vue')
-			},
-			{
-				path: 'activity',
-				name: 'activity',
-				meta: {
-					requireAuth: true,
-					title: '活动',
-				},
-				component: () => import('@/view/module/activity/index.vue')
-			}
-		]
-  }
-]
+//const asyncRoutes = 
 if (!dyncRouters || dyncRouters.length === 0) {
 	dyncRouters = dyncRouters.concat(asyncRoutes)
 	router.addRoutes(dyncRouters)
@@ -110,5 +37,32 @@ if (!dyncRouters || dyncRouters.length === 0) {
 		return routerPush.call(this, location).catch(error=> error)
 	}
 }
-
+/*router.beforeEach((to, from, next) => {
+  const token = getToken() //window.localStorage.getItem('token')
+  console.log(token)
+  if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
+    if (token) { // 通过vuex state获取当前的token是否存在
+      console.log(token)
+	    /*if (!dyncRouters || dyncRouters.length === 0) {
+		    dyncRouters = dyncRouters.concat(asyncRoutes)
+		    router.addRoutes(dyncRouters)
+		    routes.push(...dyncRouters)
+		    //防止重复添加路由报错
+		    const routerPush = Router.prototype.push
+		    Router.prototype.push = function push(location) {
+				  return routerPush.call(this, location).catch(error=> error)
+		    }
+	    }
+      next()
+    } else {
+      //console.log('该页面需要登陆')
+      next({
+        name: 'login' // query: {redirect: to.fullPath} // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }
+  } else {
+		//console.log(dyncRouters)
+    next()
+  }
+})*/
 export default router

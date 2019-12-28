@@ -45,7 +45,7 @@
       <div>
         <Form ref="form1" :model="formItem" :rules="formItemRules" :label-width="100">
           <FormItem label="任务名称" prop="jobName">
-            <Input :disabled="formItem.newData?false:true" v-model="formItem.jobName" placeholder="请输入内容"></Input>
+            <Input :disabled="formItem.newData?false:true" v-model="formItem.jobName" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="任务类型" prop="jobType">
             <Select v-model="formItem.jobType">
@@ -70,25 +70,26 @@
             </RadioGroup>
           </FormItem>
           <FormItem v-if="formItem.jobType === 'simple'" label="重复执行间隔" prop="repeatInterval">
-            <InputNumber :min="1000" v-model="formItem.repeatInterval"></InputNumber>
+            <InputNumber :min="1000" v-model="formItem.repeatInterval" />
             <span>&nbsp;&nbsp;毫秒</span>
           </FormItem>
           <FormItem v-if="formItem.jobType === 'cron'" label="cron表达式" prop="cron">
-            <Input v-model="formItem.cron" placeholder="* * * * * ?"></Input>
+            <Input v-model="formItem.cron" placeholder="* * * * * ?" />
           </FormItem>
           <FormItem label="远程调度接口" prop="path">
             <Select filterable v-model="formItem.path" @on-change="handleOnSelectChange">
-              <Option v-for="item in selectApis" :value="item.path">{{ item.path
+              <Option v-for="(item, index) in selectApis" :value="item.path" :key="index">
+                {{ 
+                  item.path
                 }} - {{ item.apiName}} - {{ item.serviceId}}
-
               </Option>
             </Select>
           </FormItem>
           <FormItem label="任务描述">
-            <Input v-model="formItem.jobDescription" type="textarea" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.jobDescription" type="textarea" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="异常告警邮箱" prop="alarmMail">
-            <Input v-model="formItem.alarmMail" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.alarmMail" placeholder="请输入内容" />
           </FormItem>
         </Form>
         <div class="drawer-footer">
