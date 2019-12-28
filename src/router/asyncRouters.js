@@ -72,6 +72,15 @@ export default [
 				component: () => import('@/view/module/system/developer/index.vue')
 			},
 			{
+				path: 'addDeveloper',
+				name: 'addDeveloper',
+				meta: {
+					requireAuth: true,
+					title: '新增/编辑部门'
+				},
+				component: () => import('@/view/module/system/developer/add.vue')
+			},
+			{
 				path: 'product',
 				name: 'product',
 				meta: {

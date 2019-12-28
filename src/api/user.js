@@ -15,6 +15,16 @@ const delUser = params => axios.delete('api-admin/user/web/del', params)
 const delUserBatch = params => axios.delete('api-admin/user/web/delBatch', params)
 //根据用户id获取用户信息
 const getUserInfo = params => axios.get('api-admin/user/info', params)
+//判断用户原密码是否正确-后台管理用户管理
+const getUserJudge = params => axios.get('api-admin/user/web/judge', params)
+//分配用户角色-后端管理用户管理
+const getUserRolw = params => axios.put('api-admin/user/web/role', params)
+//修改用户状态 0无效 1有效 
+const getUserStatus = params => axios.put('api-admin/user/web/status', params)
+//修改用户
+const updateUser = params => axios.put('api-admin/user/web/update', params)
+//修改用户密码-后端管理用户管理
+const updatePassword = params => axios.put('api-admin/user/web/updatePassword', params)
 export {
   getUserApi,
   getUserList,
@@ -23,5 +33,10 @@ export {
   getUserCheck,
   delUser,
   delUserBatch,
-  getPrincipal
+  getPrincipal,
+  getUserJudge,
+  getUserRolw,
+  getUserStatus,
+  updateUser,
+  updatePassword
 }

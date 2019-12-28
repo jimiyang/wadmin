@@ -1,7 +1,7 @@
 <template>
   <div class="side-menu-wrapper" style="background: #002140;">
 		<Menu theme="dark" :open-names="[1]" width="220px">
-      <Submenu :name="(index + 1)" v-if="item.children !== undefined "  v-for="(item, index) in menuList" :key="index" style="background: #002140;">
+      <Submenu :name="(index + 1)"   v-for="(item, index) in menuList" :key="index" style="background: #002140;">
         <template slot="title" style="background: #002140;">
           <Icon :type="item.type" />{{item.name}}
         </template>
@@ -9,9 +9,9 @@
           <Icon :type="children.type" />{{children.name}}
         </MenuItem>
       </Submenu>
-			<MenuItem @click.native="handleOpen(item.urlPath)" v-else :name="item.name">
+			<!--<MenuItem @click.native="handleOpen(item.urlPath)" v-else :name="item.name">
 					{{item.name}}
-			</MenuItem>
+			</MenuItem>-->
     </Menu>
   </div>
 </template>

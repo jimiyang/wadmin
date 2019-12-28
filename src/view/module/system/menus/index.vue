@@ -2,23 +2,23 @@
   <div>
     <Row :gutter="8">
       <Col :xs="8" :sm="8" :md="8" :lg="6">
-      <Card shadow>
-        <tree-table style="max-height:700px;overflow: auto"
-            expand-key="menuName"
-            @radio-click="rowClick"
-            :expand-type="false"
-            :is-fold="false"
-            :tree-type="true"
-            :selectable="false"
-            :columns="columns"
-            :data="data">
-          <template slot="status" slot-scope="scope">
-            <Badge v-if="scope.row.status===1" status="success"/>
-            <Badge v-else="" status="error"/>
-            <Icon :type="scope.row.icon" size="16"/>
-          </template>
-        </tree-table>
-      </Card>
+        <Card shadow>
+          <tree-table style="max-height:700px;overflow: auto"
+              expand-key="menuName"
+              @radio-click="rowClick"
+              :expand-type="false"
+              :is-fold="false"
+              :tree-type="true"
+              :selectable="false"
+              :columns="columns"
+              :data="data">
+            <template slot="status" slot-scope="scope">
+              <Badge v-if="scope.row.status===1" status="success"/>
+              <Badge v-else="" status="error"/>
+              <Icon :type="scope.row.icon" size="16"/>
+            </template>
+          </tree-table>
+        </Card>
       </Col>
       <Col :xs="16" :sm="16" :md="16" :lg="10">
       <Card shadow>
@@ -48,13 +48,13 @@
               :normalizer="treeSelectNormalizer"/>
           </FormItem>
           <FormItem label="菜单标识" prop="menuCode">
-            <Input v-model="formItem.menuCode" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.menuCode" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="菜单名称" prop="menuName">
-            <Input v-model="formItem.menuName" placeholder="请输入内容"></Input>
+            <Input v-model="formItem.menuName" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="页面地址" prop="path">
-            <Input v-model="formItem.path" placeholder="请输入内容">
+            <Input v-model="formItem.path" placeholder="请输入内容" />
             <Select v-model="formItem.scheme" slot="prepend" style="width: 80px">
               <Option value="/">/</Option>
               <Option value="http://">http://</Option>
@@ -64,25 +64,23 @@
               <Option value="_self">窗口内打开</Option>
               <Option :disabled="formItem.scheme==='/'" value="_blank">新窗口打开</Option>
             </Select>
-            </Input>
             <span v-if="formItem.scheme === '/'">前端组件：/view/module/{{formItem.path}}.vue</span>
             <span v-else="">跳转地址：{{formItem.scheme}}{{formItem.path}}</span>
           </FormItem>
           <FormItem label="图标">
-            <Input v-model="formItem.icon" placeholder="请输入内容">
+            <Input v-model="formItem.icon" placeholder="请输入内容" />
             <Icon size="22" :type="formItem.icon" slot="prepend"/>
             <Poptip width="600" slot="append" placement="bottom">
               <Button icon="ios-search"></Button>
               <div slot="content">
                 <ul class="icons">
-                  <li class="icons-item" :title="item" @click="onIconClick(item)" v-for="item in selectIcons">
+                  <li class="icons-item" :title="item" @click="onIconClick(item)" v-for="(item, index) in selectIcons" :key="index">
                     <Icon :type="item" size="28"/>
                     <p>{{item}}</p>
                   </li>
                 </ul>
               </div>
             </Poptip>
-            </Input>
           </FormItem>
           <FormItem label="优先级">
             <InputNumber v-model="formItem.priority"></InputNumber>
@@ -104,9 +102,9 @@
       </Card>
       </Col>
       <Col :xs="16" :sm="16" :md="16" :lg="8">
-      <Card shadow>
-        <menu-action :value="formItem"></menu-action>
-      </Card>
+        <Card shadow>
+          <menu-action :value="formItem"></menu-action>
+        </Card>
       </Col>
     </Row>
   </div>
