@@ -26,56 +26,74 @@ export default [
 				},
 				component: () => import('@/view/module/system/menus/index.vue')
 		 	},
-		 {
-			path: 't2',
-			name: 't2',
-			meta: {
-				requireAuth: true,
-				title: '角色信息'
+			{
+				path: 't2',
+				name: 't2',
+				meta: {
+					requireAuth: true,
+					title: '角色信息'
+				},
+				component: () => import('@/view/module/system/role/index.vue')
 			},
-			component: () => import('@/view/module/system/role/index.vue')
-		 },
-		 {
-			path: 't4',
-			name: 't4',
-			meta: {
-				requireAuth: true,
-				title: '系统用户'
+			{
+				path: 't4',
+				name: 't4',
+				meta: {
+					requireAuth: true,
+					title: '系统用户'
+				},
+				component: () => import('@/view/module/system/user/index.vue')
 			},
-			component: () => import('@/view/module/system/user/index.vue')
-		 },
-		 {
-			path: 'company',
-			name: 'company',
-			meta: {
-				requireAuth: true,
-				title: '公司管理'
+			{
+				path: 'userinfo',
+				name: 'userinfo',
+				meta: {
+					requireAuth: true,
+					title: '新增/编辑用户'
+				},
+				component: () => import('@/view/module/system/user/userInfo.vue')
 			},
-			component: () => import('@/view/module/company/index.vue')
-		 },
-		 {
-		  path: 'product',
-		  name: 'product',
-		  meta: {
-				requireAuth: true,
-				title: '产品'
-		  },
-		  component: () => import('@/view/module/product/index.vue')
-		 },
-		 {
-		  path: 'add',
-		  name: 'add',
-		  component: () => import('@/view/module/product/add/add.vue')
-		 },
-		 {
-			path: 'activity',
-			name: 'activity',
-			meta: {
-				requireAuth: true,
-				title: '活动',
+			{
+				path: 'company',
+				name: 'company',
+				meta: {
+					requireAuth: true,
+					title: '公司管理'
+				},
+				component: () => import('@/view/module/company/index.vue')
 			},
-			component: () => import('@/view/module/activity/index.vue')
-		 }
+			{
+				path: 'developer',
+				name: 'developer',
+				meta: {
+					requireAuth: true,
+					title: '部门管理'
+				},
+				component: () => import('@/view/module/system/developer/index.vue')
+			},
+			{
+				path: 'product',
+				name: 'product',
+				meta: {
+					requireAuth: true,
+					title: '产品'
+				},
+				component: () => import('@/view/module/product/index.vue')
+			},
+			{
+				path: 'add',
+				name: 'add',
+				component: () => import('@/view/module/product/add/add.vue')
+			},
+			{
+				path: 'activity',
+				name: 'activity',
+				meta: {
+					requireAuth: true,
+					title: '活动',
+				},
+				component: () => import('@/view/module/activity/index.vue')
+			}
 	 ]
   }
 ]

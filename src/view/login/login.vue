@@ -106,8 +106,8 @@
                 password = this.form.password
             this.handleLogin({username, password}).then(rs => {
             	if(rs) {
-            		/*window.localStorage.setItem('token', rs.data.token);
-                window.localStorage.setItem('userInfo', JSON.stringify(rs.data));*/
+            		window.localStorage.setItem('token', rs.data.token);
+                /*window.localStorage.setItem('userInfo', JSON.stringify(rs.data));*/
             		this.$router.push({
             		  path: this.$config.homeName
             		})

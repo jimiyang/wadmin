@@ -17,13 +17,14 @@
         </FormItem>
       </Form>
       <div class="search-con search-con-top">
-        <ButtonGroup>
-          <Button type="primary" @click="handleModal()">
-            <span>添加</span>
-          </Button>
-        </ButtonGroup>
+        <Button type="primary" @click="handleModal()">
+          <span>添加</span>
+        </Button>
+        <Button class="ml20" type="primary" @click="deleteAllSelected()">
+          <span>批量删除</span>
+        </Button>
       </div>
-      <Table border :columns="columns" :data="data" :loading="loading">
+      <Table border :columns="columns" :data="data" :loading="loading" ref="selection" @on-selection-change="handleSelectRow()">
         <template slot="status" slot-scope="{ row }">
           <Badge v-if="row.status===1" status="success" text="正常"/>
           <Badge v-else-if="row.status===2" status="warning" text="锁定"/>
@@ -40,15 +41,16 @@
         @on-change="handlePage" @on-page-size-change='handlePageSize'></Page>
     </Card>
     <Modal v-model="modalVisible"
-           :title="modalTitle"
-           width="40"
-           @on-cancel="handleReset">
+      :title="modalTitle"
+      width="40"
+      @on-cancel="handleReset"
+    >
       <div>
         <Form  ref="form1" :model="formItem" :rules="formItemRules" :label-width="100">
-          <FormItem label="公司类型" prop="compId">
-            <RadioGroup v-model="formItem.compId">
-              <Radio label="0">公司</Radio>
-              <Radio label="1">部门</Radio>
+          <FormItem label="公司类型" prop="deptType">
+            <RadioGroup v-model="formItem.deptType">
+              <Radio :label="0">公司</Radio>
+              <Radio :label="1">部门</Radio>
             </RadioGroup>
           </FormItem>
           <FormItem label="公司全称" prop="fullName">
@@ -84,7 +86,7 @@
 </template>
 <script>
   import {startWith, listConvertTree} from '@/libs/util'
-  import {getListCompany, addCompany, updateCompany, deleteCompany} from '@/api/company'
+  import {getListCompany, addCompany, updateCompany, deleteCompany, deleteSingleCompany, getCompanyInfo} from '@/api/company'
   export default {
     data() {
       return {
@@ -97,10 +99,10 @@
           deptType: null, //公司类型 0公司 1部门
           current: 1, //当前页
           page: 1, //总页数
-          size: 1, //每页条数
+          size: 10, //每页条数
         },
         selectMenus: [],
-        selectRoles: [],
+        selectedRowKeys: [],
         formItemRules: {
           fullName: [
             {required: true, message: '公司全称不能为空', trigger: 'blur'}
@@ -113,14 +115,13 @@
           ]
         },
         formItem: {
+          deptType: 0,
           address: null,
-          compId: 1,
           fullName: null,
           num: null,
           pid: 1,
           simpleName: null,
-          tips: null,
-          userId: 1
+          tips: null
         },
         columns: [
           {
@@ -158,8 +159,8 @@
             }
           },
           {
-            title: '更新时间',
-            key: 'pid'
+            title: '公司标签',
+            key: 'tips'
           },
           {
             title: '操作',
@@ -172,45 +173,50 @@
       }
     },
     methods: {
+      handleSelectRow() {
+        this.selectedRowKeys = this.$refs.selection.getSelection()
+      },
+      deleteAllSelected () {
+        //批量删除
+        let arr = []
+        if (this.selectedRowKeys.length === 0) {
+          this.$Message.warning('请选择要删除的信息')
+          return false
+        }
+        this.selectedRowKeys.map(item => {
+          arr.push(item.id)
+        })
+        deleteCompany({ids: arr}).then(rs => {
+          if (rs.code === 200) {
+            this.$Message.warning(rs.message)
+            this.handleSearch()
+          }
+        })
+      },
       handleModal(data) {
         if (data) {
           this.formItem = Object.assign({}, this.formItem, data)
         }
-        //if (this.current === this.forms[0]) {
-          this.modalTitle = data ? '编辑公司 - ' + data.userName : '添加公司'
-          this.modalVisible = true
-        //}
-        //this.formItem.status = this.formItem.status + ''
+        this.modalTitle = data ? '编辑' : '添加'
+        this.modalVisible = true
       },
-      handleResetForm(form) {
-        //this.$refs[form].resetFields()
+      handleResetForm() {
+        this.$refs['form1'].resetFields()
       },
       handleReset() {
         const newData = {
-          userId: '',
-          userName: '',
-          nickName: '',
-          password: '',
-          passwordConfirm: '',
-          status: 1,
-          companyId: '',
-          email: '',
-          mobile: '',
-          userType: 'normal',
-          userDesc: '',
-          avatar: '',
-          grantRoles: [],
-          grantMenus: [],
-          grantActions: [],
-          expireTime: '',
-          isExpired: false
+          address: null,
+          compId: null,
+          fullName: null,
+          num: null,
+          pid: null,
+          simpleName: null,
+          tips: null,
+          userId: null
         }
         this.formItem = newData
         //重置验证
-        this.forms.map(form => {
-          this.handleResetForm(form)
-        })
-        this.current = this.forms[0]
+        this.handleResetForm()
         this.formItem.grantMenus = []
         this.formItem.grantActions = []
         this.modalVisible = false
@@ -219,22 +225,22 @@
       handleSubmit() {
         this.$refs['form1'].validate((valid) => {
           if (valid) {
-            //this.saving = true
+            this.saving = true
             if (!this.formItem.id) {
+              //添加
               addCompany(this.formItem).then(res => {
-                console.log(res)
-                //if (res.code === 0) {
-                  //this.$Message.success('保存成功')
-                  //this.handleReset()
-                //}
-                //this.handleSearch()
+                if (res.code === 200) {
+                  this.$Message.success('保存成功')
+                  this.handleReset()
+                }
+                this.handleSearch()
               }).finally(() => {
                 this.saving = false
               })
             } else {
-              console.log(this.formItem.id)
-              addUser(this.formItem).then(res => {
-                if (res.code === 0) {
+              //编辑
+              updateCompany(this.formItem).then(res => {
+                if (res.code === 200) {
                   this.$Message.success('保存成功')
                   this.handleReset()
                 }
@@ -249,15 +255,17 @@
       //删除
       deleteCompanyEvent(row) {
         this.$Modal.confirm({
-          title: `确认要删除${row.fullName}公司信息吗？`,
+          title: `确认要删除${row.simpleName}公司信息吗？`,
           onOk: () => {
-            //this.$Message.info('Clicked ok');
-            deleteCompany({id: row.id}).then(rs => {
-              console.log(rs)
+            deleteSingleCompany(row.id).then(rs => {
+              if (rs.code === 200) {
+                this.$Message.success(rs.message);
+                this.handleSearch()
+              }
             })
           },
           onCancel: () => {
-            this.$Message.info('Clicked cancel');
+            //this.$Message.info('Clicked cancel');
           }
         })
       },

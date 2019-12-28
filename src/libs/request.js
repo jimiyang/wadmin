@@ -28,16 +28,15 @@ service.apiUrl = baseUrl
  * 请求参数处理
  */
 service.interceptors.request.use((config) => {
-    // 参数签名处理
-    /*config = sign(config, $config.appId, $config.appSecret, 'SHA256')
-    config.method === 'get'
-      ? config.params = {...config.params} : config.data = qs.stringify({...config.data})
-
-    const token = getToken()
-    if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token
-    }*/
+    try {
+      config.headers['token'] = sessionStorage.getItem('token') 
+    } catch (error) {
+      sessionStorage.removeItem('token')
+    }
     return config
+  }, 
+  err => {
+    return Promise.reject(err)
   }
 )
 /**
@@ -96,9 +95,6 @@ export default {
 		return service({
 			method: 'post',
       url,
-      //headers: {
-        //'content-type': 'application/json;charset=UTF-8'
-      //},
       data  //: qs.stringify(data)
 		})
   },
@@ -112,15 +108,25 @@ export default {
   delete(url, data) {
 		return service({
 			method: 'delete',
+      url: url + '/' + data,
+      //data: qs.stringify(data)
+		})
+  },
+  delete2(url, data) {
+		return service({
+			method: 'delete',
       url,
-      data: qs.stringify(data)
+      data
 		})
   },
   put(url, data) {
 		return service({
 			method: 'PUT',
       url,
-      data: qs.stringify(data)
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      data: data
 		})
   },
 }

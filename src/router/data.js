@@ -5,24 +5,29 @@ export default [
 		type: 'md-albums',
 		children: [
 			{
-				type: 'md-menu',
-				urlPath: '/system',
-				name: '菜单资源',
-			},
-			{
 				type: 'ios-folder',
 				urlPath: 'company',
 				name: '公司管理'
 			},
 			{
 				type: 'ios-folder',
-				urlPath: 't2',
-				name: '角色信息'
+				urlPath: 'developer',
+				name: '部门管理'
 			},
 			{
 				type: 'md-cog',
 				urlPath: 't4',
 				name: '系统用户'
+			},
+			{
+				type: 'md-menu',
+				urlPath: '/system',
+				name: '菜单资源',
+			},
+			{
+				type: 'ios-folder',
+				urlPath: 't2',
+				name: '角色信息'
 			},
 			{
 				type: 'logo-xbox',

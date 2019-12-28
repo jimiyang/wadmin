@@ -27,7 +27,7 @@ const router = new Router({
 })
 const LOGIN_PAGE_NAME = 'login'
 //const asyncRoutes = 
-if (!dyncRouters || dyncRouters.length === 0) {
+/*if (!dyncRouters || dyncRouters.length === 0) {
 	dyncRouters = dyncRouters.concat(asyncRoutes)
 	router.addRoutes(dyncRouters)
 	routes.push(...dyncRouters)
@@ -36,14 +36,12 @@ if (!dyncRouters || dyncRouters.length === 0) {
 	Router.prototype.push = function push(location) {
 		return routerPush.call(this, location).catch(error=> error)
 	}
-}
-/*router.beforeEach((to, from, next) => {
+}*/
+router.beforeEach((to, from, next) => {
   const token = getToken() //window.localStorage.getItem('token')
-  console.log(token)
   if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
     if (token) { // 通过vuex state获取当前的token是否存在
-      console.log(token)
-	    /*if (!dyncRouters || dyncRouters.length === 0) {
+	    if (!dyncRouters || dyncRouters.length === 0) {
 		    dyncRouters = dyncRouters.concat(asyncRoutes)
 		    router.addRoutes(dyncRouters)
 		    routes.push(...dyncRouters)
@@ -64,5 +62,5 @@ if (!dyncRouters || dyncRouters.length === 0) {
 		//console.log(dyncRouters)
     next()
   }
-})*/
+})
 export default router

@@ -121,8 +121,7 @@
 </template>
 
 <script>
-
-
+  import {getListDept} from '@/api/department'
   export default {
     name: 'SystemDeveloper',
     data() {
@@ -185,9 +184,7 @@
         selectRoles: [],
         pageInfo: {
           page: 1,
-          pageSize: 10,
-          sort: "createTime",
-          order: "desc"
+          size: 10
         },
         formItemRules: {
           userType: [
@@ -387,14 +384,12 @@
           })
         }
       },
-      handleSearch(page) {
-        if (page) {
-          this.pageInfo.page = page
-        }
-        this.loading = true
-        getDevelopers(this.pageInfo).then(res => {
-          this.data = res.data.records
-          this.pageInfo.total = parseInt(res.data.total)
+      handleSearch() {
+        //this.loading = true
+        getListDept(this.pageInfo).then(res => {
+          console.log(res)
+          //this.data = res.data.records
+         // this.pageInfo.total = parseInt(res.data.total)
         }).finally(() => {
           this.loading = false
         })
