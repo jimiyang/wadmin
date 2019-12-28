@@ -28,9 +28,7 @@
                 <Button @click="selectCompany()" class="ml10" type="primary">请选择公司</Button>
               </FormItem>
               <FormItem label="部门id" prop="deptId">
-                <Select class="w260">
-                  <Option v-for="item in companyData" :value="item.fullName" :key="item.id">{{ item.fullName }}</Option>
-                </Select>
+                <Input v-model="formItem.deptId" placeholder="请输入内容" class="w260" />
               </FormItem>
               <FormItem label="手机号" prop="phone">
                 <Input v-model="formItem.phone" placeholder="请输入内容" class="w260" />
@@ -42,7 +40,7 @@
                 <Input type="number" v-model="formItem.age" placeholder="请输入年龄" class="w260"/>
               </FormItem>
               <FormItem label="生日" prop="birthday">
-                <DatePicker type="date" placeholder="请选择出生日期" class="w260"></DatePicker>
+                <DatePicker type="date" v-model="formItem.birthday" placeholder="请选择出生日期" class="w260"></DatePicker>
               </FormItem>
               <FormItem label="邮箱" prop="email">
                 <Input v-model="formItem.email" placeholder="请输入内容" class="w260" />
@@ -143,7 +141,7 @@
 </template>
 <script>
   import {startWith, listConvertTree} from '@/libs/util'
-  import {getUserList, addUser} from '@/api/user'
+  import {addUser, getUserCheck, updateUser, getUserInfo} from '@/api/user'
   import {getListCompany} from '@/api/company'
   import {getListDept} from '@/api/department'
   import {provinceData, cityData, countryData} from '@/assets/js/area'
@@ -218,15 +216,13 @@
           compId: [
             {required: true, message: '请选择公司信息', trigger: 'blur'}
           ],
-          deptId: [
-            {required: true, message: '请选择部门id', trigger: 'blur'}
-          ],
+          //deptId: [
+            //{required: true, message: '请选择部门id', trigger: 'blur'}
+          //],
           age: [
             {required: true, message: '用户名不能为空', trigger: 'blur'}
           ],
-          birthday: [
-            {required: true, message: '请选择出生日期', trigger: 'blur'}
-          ],
+          
           password: [
             {required: true, validator: validatePass, trigger: 'blur'}
           ],
@@ -245,31 +241,7 @@
         },
         
         companyId: null,
-        columns: [
-          {type: 'selection',width: 60,},
-          {title: 'id',key: 'id'},
-          {title: '用户名', key: 'username',width: 200},
-          {title: '昵称',key: 'nickname'},
-          {title: '性别',key: 'sex'},
-          {title: '邮箱', key: 'email'},
-          {title: '手机号',key: 'phone'},
-          {title: '省',key: 'province'},
-          {title: '市',key: 'city'},
-          {title: '区',key: 'area'},
-          {title: '地址',key: 'areaddressa'},
-          {title: '年龄',key: 'age'},
-          {title: '出生日期',key: 'birthday'},
-          {title: '公司id',key: 'compId'},
-          {title: '部门id',key: 'deptId'},
-          {title: '角色id',key: 'roleId'},
-          {title: '头像',key: 'headImage'},
-          {
-            title: '操作',
-            slot: 'action',
-            fixed: 'right',
-            width: 150
-          }
-        ],
+        
         columns2: [
           {
             title: '菜单',
@@ -333,7 +305,8 @@
           }
         ],
         data: [],
-        companyData: []
+        companyData: [],
+        userInfo: JSON.parse(window.localStorage.getItem('userInfo'))
       }
     },
     methods: {
@@ -391,27 +364,28 @@
           this.$refs[this.current].validate((valid) => {
             if (valid) {
               this.saving = true
+              console.log(this.formItem.id)
               if (!this.formItem.id) {
                 addUser(this.formItem).then(res => {
-                  console.log(res)
-                  if (res.code === 0) {
-                    this.$Message.success('保存成功')
+                  if (res.code === 200) {
+                    this.$Message.success(res.message)
+                    this.handleReset()
+                  }
+                  window.history.go(-1)
+                }).finally(() => {
+                  this.saving = false
+                })
+              } else {
+                const params = Object.assign(this.formItem, {userId: this.userInfo.userId})
+                updateUser(this.formItem).then(res => {
+                  if (res.code === 200) {
+                    this.$Message.success(res.message)
                     this.handleReset()
                   }
                   this.handleSearch()
                 }).finally(() => {
                   this.saving = false
                 })
-              } else {
-                /*addUser(this.formItem).then(res => {
-                  if (res.code === 0) {
-                    this.$Message.success('保存成功')
-                    this.handleReset()
-                  }
-                  this.handleSearch()
-                }).finally(() => {
-                  this.saving = false
-                })*/
               }
             }
           })
@@ -475,20 +449,6 @@
             }
           })
         }
-      },
-      handleSearch(page) {
-        if (page) {
-          this.pageInfo.page = page
-        }
-        this.loading = true
-        getUserList(this.pageInfo).then(res => {
-          if (res.code === 200) {
-            this.data = res.data.records
-            this.pageInfo.total = parseInt(res.data.total)
-          }
-        }).finally(() => {
-          this.loading = false
-        })
       },
       getCheckedAuthorities() {
         const menus = this.$refs['tree'].getCheckedProp('authorityId')
@@ -601,9 +561,11 @@
           }
         })
       },
-      getDept() {
-        getListDept().then(rs => {
-          console.log(rs)
+      initForm(id) {
+        getUserInfo(id).then(res => {
+          if (res.code === 200) {
+            this.formItem = res.data
+          }
         })
       }
     },
@@ -611,7 +573,9 @@
       this.province = provinceData
       //this.handleSearch()
       this.getCompanyList()
-      //this.getDept()
+      if (this.$route.params.id !== null) {
+        this.initForm(this.$route.params.id)
+      }
     }
   }
 </script>

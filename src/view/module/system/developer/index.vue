@@ -5,14 +5,8 @@
             :model="pageInfo"
             inline
             :label-width="80">
-        <FormItem label="登录名" prop="userName">
-          <Input type="text" v-model="pageInfo.userName" placeholder="请输入关键字"/>
-        </FormItem>
-        <FormItem label="手机号" prop="mobile">
-          <Input type="text" v-model="pageInfo.mobile" placeholder="请输入关键字"/>
-        </FormItem>
-        <FormItem label="邮箱" prop="email">
-          <Input type="text" v-model="pageInfo.email" placeholder="请输入关键字"/>
+        <FormItem label="部门名称" prop="name">
+          <Input type="text" v-model="pageInfo.name" placeholder="请输入关键字" class="w260"/>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSearch(1)">查询</Button>&nbsp;
@@ -21,12 +15,8 @@
       </Form>
 
       <div class="search-con search-con-top">
-        <ButtonGroup>
-          <Button type="primary"
-            @click="handleModal()">
-            <span>添加</span>
-          </Button>
-        </ButtonGroup>
+        <Button type="primary" @click="handleModal()">添加</Button>
+        <Button type="primary" class="ml10">批量删除</Button>
       </div>
 
       <Table border :columns="columns" :data="data" :loading="loading">
@@ -36,16 +26,8 @@
           <Badge v-else="" status="error" text="禁用"/>
         </template>
         <template slot="action" slot-scope="{ row }">
-          <a :disabled="hasAuthority('developerEdit')?false:true" @click="handleModal(row)">编辑</a>&nbsp;
-          <Dropdown v-show="hasAuthority('developerEdit')" transfer ref="dropdown" @on-click="handleClick($event,row)">
-            <a href="javascript:void(0)">
-              <span>更多</span>
-              <Icon type="ios-arrow-down"></Icon>
-            </a>
-            <DropdownMenu slot="list">
-              <DropdownItem name="sendToEmail">发送到密保邮箱</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>&nbsp;
+          <a  @click="handleModal(row)">编辑</a>&nbsp;
+          <a  @click="deleteDept(row)">删除</a>&nbsp;  
         </template>
       </Table>
       <Page transfer :total="pageInfo.total" :current="pageInfo.page" :page-size="pageInfo.limit" show-elevator
@@ -57,7 +39,7 @@
 </template>
 
 <script>
-  import {getListDept} from '@/api/department'
+  import {getWebList, deleteSingelDept} from '@/api/department'
   export default {
     name: 'SystemDeveloper',
     data() {
@@ -75,43 +57,33 @@
           },
           {
             title: '部门名称',
-            key: 'userName',
+            key: 'fullName',
             width: 200
           },
           {
-            title: '昵称',
-            key: 'nickName',
+            title: '部门简称',
+            key: 'simpleName',
             width: 150
           },
           {
-            title: '邮箱',
-            key: 'email',
+            title: '地址',
+            key: 'address',
             width: 200
           },
           {
-            title: '手机号',
-            key: 'mobile',
+            title: '公司id',
+            key: 'compId',
             width: 200
           },
           {
-            title: '状态',
-            slot: 'status',
-            key: 'status',
+            title: '部门人数',
+            key: 'num',
             width: 100
           },
           {
-            title: '开发者类型',
-            key: 'userType',
+            title: '标签',
+            key: 'tips',
             width: 150
-          },
-          {
-            title: '注册时间',
-            key: 'createTime',
-            width: 180
-          },
-          {
-            title: '描述',
-            key: 'userDesc'
           },
           {
             title: '操作',
@@ -124,16 +96,25 @@
       }
     },
     methods: {
-      handleModal() {
-        this.$router.push({name: 'addDeveloper'})
+      deleteDept(row) {
+        deleteSingelDept(row.id).then(res => {
+          if(res.code === 200) {
+            this.$Message.success(res.message)
+            this.handleSearch()
+          }
+        })
+      },
+      handleModal(row) {
+        this.$router.push({name: 'addDeveloper', params: {id: row !== undefined ? row.id : null}})
       },
       handleSearch() {
         //this.loading = true
         const params = Object.assign(this.pageInfo, {deptId: this.userInfo.deptId})
-        getListDept(this.pageInfo).then(res => {
-          console.log(res)
-          //this.data = res.data.records
-         // this.pageInfo.total = parseInt(res.data.total)
+        getWebList(this.pageInfo).then(res => {
+          if (res.code === 200) {
+            this.data = res.data.records
+            this.pageInfo.total = parseInt(res.data.total)
+          }
         }).finally(() => {
           this.loading = false
         })

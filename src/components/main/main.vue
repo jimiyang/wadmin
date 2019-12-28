@@ -122,7 +122,8 @@
         minLogo,
         maxLogo,
         isFullscreen: false,
-        screenWidth: 0
+        screenWidth: 0,
+        userInfo: JSON.parse(window.localStorage.getItem('userInfo')),
       }
     },
     computed: {
@@ -154,7 +155,7 @@
         return this.$store.state.user.avatarImgPath
       },
       userName () {
-        return this.$store.state.user.userName //'我是吉米小绵羊啊'
+        return this.userInfo.username //'我是吉米小绵羊啊'
       },
       menuList () {
         return this.$store.getters.menuList

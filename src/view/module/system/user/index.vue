@@ -20,11 +20,8 @@
         </FormItem>
       </Form>
       <div class="search-con search-con-top">
-        <ButtonGroup>
-          <Button type="primary" @click="handleModal()">
-            <span>添加</span>
-          </Button>
-        </ButtonGroup>
+        <Button type="primary" @click="handleModal()">添加</Button>
+        <Button type="primary" class="ml10">批量删除</Button>
       </div>
       <Table border :columns="columns" :data="data" :loading="loading">
         <template slot="status" slot-scope="{ row }">
@@ -34,15 +31,7 @@
         </template>
         <template slot="action" slot-scope="{ row }">
           <a @click="handleModal(row)">编辑</a>&nbsp;
-          <Dropdown v-show="hasAuthority('systemUserEdit')" transfer ref="dropdown" @on-click="handleClick($event,row)">
-            <a href="javascript:void(0)">
-              <span>更多</span>
-              <Icon type="ios-arrow-down"></Icon>
-            </a>
-            <DropdownMenu slot="list">
-              <DropdownItem name="sendToEmail">发送到密保邮箱</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>&nbsp;
+          <a @click="deleteUser(row)">删除</a>&nbsp;
         </template>
       </Table>
       <Page transfer :total="pageInfo.total" :current="pageInfo.page" :page-size="pageInfo.size" show-elevator
@@ -54,7 +43,7 @@
 </template>
 <script>
   import {startWith, listConvertTree} from '@/libs/util'
-  import {getUserList, addUser} from '@/api/user'
+  import {getUserList, addUser, delUser} from '@/api/user'
   import {getListCompany} from '@/api/company'
   import {getListDept} from '@/api/department'
   import {provinceData, cityData, countryData} from '@/assets/js/area'
@@ -66,27 +55,27 @@
         pageInfo: {
           page: 1,
           size: 10,
-          deptId: 1,
-          userId: 1
+          deptId: '',
+          userId: null
         },
         columns: [
           {type: 'selection',width: 60,},
-          {title: 'id',key: 'id'},
-          {title: '用户名', key: 'username',width: 200},
-          {title: '昵称',key: 'nickname'},
-          {title: '性别',key: 'sex'},
-          {title: '邮箱', key: 'email'},
-          {title: '手机号',key: 'phone'},
-          {title: '省',key: 'province'},
-          {title: '市',key: 'city'},
-          {title: '区',key: 'area'},
-          {title: '地址',key: 'areaddressa'},
-          {title: '年龄',key: 'age'},
-          {title: '出生日期',key: 'birthday'},
-          {title: '公司id',key: 'compId'},
-          {title: '部门id',key: 'deptId'},
-          {title: '角色id',key: 'roleId'},
-          {title: '头像',key: 'headImage'},
+          {title: 'id',key: 'id', width: 200},
+          {title: '用户名', key: 'username', width: 200},
+          {title: '昵称',key: 'nickname', width: 200},
+          {title: '性别',key: 'sex', width: 80},
+          {title: '邮箱', key: 'email', width: 200},
+          {title: '手机号',key: 'phone', width: 200},
+          {title: '省',key: 'province', width: 80},
+          {title: '市',key: 'city', width: 80},
+          {title: '区',key: 'area', width: 80},
+          {title: '地址',key: 'areaddressa', width: 200},
+          {title: '年龄',key: 'age', width: 80},
+          {title: '出生日期',key: 'birthday', width: 200},
+          {title: '公司id',key: 'compId', width: 80},
+          {title: '部门id',key: 'deptId', width: 80},
+          {title: '角色id',key: 'roleId', width: 80},
+          {title: '头像',key: 'headImage', width: 200},
           {
             title: '操作',
             slot: 'action',
@@ -108,19 +97,29 @@
           }
         ],
         data: [],
-        companyData: []
+        companyData: [],
+        userInfo: JSON.parse(window.localStorage.getItem('userInfo')),
       }
     },
     methods: {
-      handleModal(data) {
-        this.$router.push({name: 'userinfo'})
+      handleModal(row) {
+        this.$router.push({name: 'userinfo', params: {id: row !== undefined ? row.id : null}})
+      },
+      deleteUser(row) {
+        delUser(row.id).then(res => {
+          if(res.code === 200) {
+            this.$Message.info(res.message);
+            this.handleSearch()
+          }
+        })
       },
       handleSearch(page) {
         if (page) {
           this.pageInfo.page = page
         }
         this.loading = true
-        getUserList(this.pageInfo).then(res => {
+        const params = Object.assign(this.pageInfo, {userId: this.userInfo.id})
+        getUserList(params).then(res => {
           if (res.code === 200) {
             this.data = res.data.records
             this.pageInfo.total = parseInt(res.data.total)
@@ -156,7 +155,7 @@
     },
     mounted: function () {
       this.province = provinceData
-      //this.handleSearch()
+      this.handleSearch()
       //this.getDept()
     }
   }

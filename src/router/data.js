@@ -16,7 +16,7 @@ export default [
 			},
 			{
 				type: 'md-cog',
-				urlPath: 't4',
+				urlPath: 'user',
 				name: '系统用户'
 			},
 			{
@@ -26,7 +26,7 @@ export default [
 			},
 			{
 				type: 'ios-folder',
-				urlPath: 't2',
+				urlPath: 'role',
 				name: '角色信息'
 			},
 			{

@@ -26,20 +26,9 @@ const router = new Router({
   //mode: 'history'
 })
 const LOGIN_PAGE_NAME = 'login'
-//const asyncRoutes = 
-/*if (!dyncRouters || dyncRouters.length === 0) {
-	dyncRouters = dyncRouters.concat(asyncRoutes)
-	router.addRoutes(dyncRouters)
-	routes.push(...dyncRouters)
-	//防止重复添加路由报错
-	const routerPush = Router.prototype.push
-	Router.prototype.push = function push(location) {
-		return routerPush.call(this, location).catch(error=> error)
-	}
-}*/
 router.beforeEach((to, from, next) => {
   const token = getToken() //window.localStorage.getItem('token')
-  if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
+  if (!to.meta.name || to.meta.requireAuth) { // 判断该路由是否需要登录权限
     if (token) { // 通过vuex state获取当前的token是否存在
 	    if (!dyncRouters || dyncRouters.length === 0) {
 		    dyncRouters = dyncRouters.concat(asyncRoutes)

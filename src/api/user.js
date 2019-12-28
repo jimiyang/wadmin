@@ -14,7 +14,7 @@ const delUser = params => axios.delete('api-admin/user/web/del', params)
 //批量删除用户管理-后端管理用户管理
 const delUserBatch = params => axios.delete('api-admin/user/web/delBatch', params)
 //根据用户id获取用户信息
-const getUserInfo = params => axios.get('api-admin/user/info', params)
+const getUserInfo = params => axios.get2('api-admin/user/web/info', params)
 //判断用户原密码是否正确-后台管理用户管理
 const getUserJudge = params => axios.get('api-admin/user/web/judge', params)
 //分配用户角色-后端管理用户管理

@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-  import {getListDept, addDept} from '@/api/department'
+  import {getListDept, addDept, getDeptInfo, updateDept} from '@/api/department'
   import {getListCompany} from '@/api/company'
   export default {
     name: 'SystemDeveloper',
@@ -175,7 +175,7 @@
         this.companyId = null
       },
       handleResetForm(form) {
-        this.$refs[form].resetFields()
+      //this.$refs[form].resetFields()
       },
       handleReset() {
         const newData = {
@@ -208,20 +208,20 @@
                 this.formItem = Object.assign(this.formItem, {pid:this.companyId, userId: this.userInfo.id, operateUserId: this.userInfo.id})
                 addDept(this.formItem).then(res => {
                   if (res.code === 200) {
-                    this.$Message.success('保存成功')
+                    this.$Message.success(res.message)
                     this.handleReset()
                   }
-                  this.handleSearch()
+                  window.history.go(-1)
                 }).finally(() => {
                   this.saving = false
                 })
               } else {
-                addDeveloper(this.formItem).then(res => {
-                  if (res.code === 0) {
-                    this.$Message.success('保存成功')
+                updateDept(this.formItem).then(res => {
+                  if (res.code === 200) {
+                    this.$Message.success(res.message)
                     this.handleReset()
                   }
-                  this.handleSearch()
+                  window.history.go(-1)
                 }).finally(() => {
                   this.saving = false
                 })
@@ -250,39 +250,23 @@
           })
         }
       },
-      handleSearch() {
-        //this.loading = true
-        getListDept(this.pageInfo).then(res => {
-          console.log(res)
-          //this.data = res.data.records
-         // this.pageInfo.total = parseInt(res.data.total)
-        }).finally(() => {
-          this.loading = false
+      initForm(id) {
+        getDeptInfo(id).then(res => {
+          if (res.code === 200) {
+            this.formItem = res.data
+          }
         })
-      },
-      handlePage(current) {
-        this.pageInfo.page = current
-        this.handleSearch()
-      },
-      handlePageSize(size) {
-        this.pageInfo.limit = size
-        this.handleSearch()
-      },
-      handleClick(name, row) {
-        switch (name) {
-          case'sendToEmail':
-            this.$Message.warning("发送至密保邮箱,开发中...")
-            break
-        }
       },
       handleTabClick(name){
         this.current = name
         this.handleModal();
-      }
+      },
     },
     mounted: function () {
-      //this.handleSearch()
       this.getCompanyList()
+      if (this.$route.params.id !== null) {
+        his.initForm(this.$route.params.id)
+      }
     }
   }
 </script>

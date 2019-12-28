@@ -105,6 +105,13 @@ export default {
       params: data
 		})
   },
+  get2(url, data) {
+		return service({
+			method: 'get',
+      url: url + '/' + data,
+      //data: qs.stringify(data)
+		})
+  },
   delete(url, data) {
 		return service({
 			method: 'delete',

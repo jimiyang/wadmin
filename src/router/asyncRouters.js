@@ -27,8 +27,8 @@ export default [
 				component: () => import('@/view/module/system/menus/index.vue')
 		 	},
 			{
-				path: 't2',
-				name: 't2',
+				path: 'role',
+				name: 'role',
 				meta: {
 					requireAuth: true,
 					title: '角色信息'
@@ -36,8 +36,8 @@ export default [
 				component: () => import('@/view/module/system/role/index.vue')
 			},
 			{
-				path: 't4',
-				name: 't4',
+				path: 'user',
+				name: 'user',
 				meta: {
 					requireAuth: true,
 					title: '系统用户'

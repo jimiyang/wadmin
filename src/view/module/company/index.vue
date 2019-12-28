@@ -6,10 +6,7 @@
           inline
           :label-width="80">
         <FormItem label="公司名称" prop="fullName">
-          <Input type="text"  placeholder="请输入关键字"/>
-        </FormItem>
-        <FormItem label="创建人" prop="deptType">
-          <Input type="text"  placeholder="请输入关键字"/>
+          <Input type="text"  placeholder="请输入关键字" class="w260"/>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSearch(1)">查询</Button>&nbsp;
