@@ -30,6 +30,11 @@
               <FormItem label="部门id" prop="deptId">
                 <Input v-model="formItem.deptId" placeholder="请输入内容" class="w260" />
               </FormItem>
+              <FormItem label="角色id" prop="roleId">
+                <Select class="w260" v-model="formItem.roleId" @on-change="selectRole()">
+                  <Option v-for="(item, index) in roleData" :key="index" :value="item.id">{{item.roleName}}</Option>
+                </Select>
+              </FormItem>
               <FormItem label="手机号" prop="phone">
                 <Input v-model="formItem.phone" placeholder="请输入内容" class="w260" />
               </FormItem>
@@ -144,6 +149,7 @@
   import {addUser, getUserCheck, updateUser, getUserInfo} from '@/api/user'
   import {getListCompany} from '@/api/company'
   import {getListDept} from '@/api/department'
+  import {roleSelectList} from '@/api/role'
   import {provinceData, cityData, countryData} from '@/assets/js/area'
   export default {
     name: 'SystemUser',
@@ -306,7 +312,8 @@
         ],
         data: [],
         companyData: [],
-        userInfo: JSON.parse(window.localStorage.getItem('userInfo'))
+        userInfo: JSON.parse(window.localStorage.getItem('userInfo')),
+        roleData: []
       }
     },
     methods: {
@@ -339,11 +346,12 @@
         this.formItem.compId = this.companyId
         this.modalVisible = false
       },
+      
       cancel() {
         this.companyId = null
       },
       handleResetForm(form) {
-        this.$refs[form].resetFields()
+        this.$refs['form1'].resetFields()
       },
       handleReset() {
         const newData = {
@@ -364,20 +372,23 @@
           this.$refs[this.current].validate((valid) => {
             if (valid) {
               this.saving = true
-              console.log(this.formItem.id)
               if (!this.formItem.id) {
-                addUser(this.formItem).then(res => {
+                const params = Object.assign(this.formItem, {operateUserId: this.userInfo.id})
+                addUser(params).then(res => {
                   if (res.code === 200) {
                     this.$Message.success(res.message)
                     this.handleReset()
                   }
-                  window.history.go(-1)
+                  //window.history.go(-1)
+                  this.$router.push({
+                    name: 'user'
+                  })
                 }).finally(() => {
                   this.saving = false
                 })
               } else {
-                const params = Object.assign(this.formItem, {userId: this.userInfo.userId})
-                updateUser(this.formItem).then(res => {
+                const params = Object.assign(this.formItem, {operateUserId: this.userInfo.id})
+                updateUser(params).then(res => {
                   if (res.code === 200) {
                     this.$Message.success(res.message)
                     this.handleReset()
@@ -554,6 +565,9 @@
         this.current = name
         this.handleModal();
       },
+      selectRole() {
+        
+      },
       getCompanyList() {
         getListCompany().then(rs => {
           if(rs.code === 200) {
@@ -567,11 +581,18 @@
             this.formItem = res.data
           }
         })
-      }
+      },
+      getSelectRoleList() {
+        roleSelectList().then(res => {
+          if(res.code === 200) {
+            this.roleData = res.data
+          }
+        })
+      },
     },
     mounted: function () {
       this.province = provinceData
-      //this.handleSearch()
+      this.getSelectRoleList()
       this.getCompanyList()
       if (this.$route.params.id !== null) {
         this.initForm(this.$route.params.id)

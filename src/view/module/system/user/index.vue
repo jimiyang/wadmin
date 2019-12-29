@@ -149,7 +149,7 @@
       },
       getDept() {
         getListDept().then(rs => {
-          console.log(rs)
+          //console.log(rs)
         })
       }
     },

@@ -150,7 +150,6 @@
         _this.contentTxt = e.text.substr(0,100);
 	  },
 	  handleSuccessQuill (res) {
-	   console.log(res)
 		// 获取富文本组件实例
 		let quill = this.$refs.myQuillEditor.quill
 		// 如果上传成功

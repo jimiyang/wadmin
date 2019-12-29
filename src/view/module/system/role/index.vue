@@ -18,30 +18,21 @@
         </FormItem>
       </Form>
       <div class="search-con search-con-top">
-        <ButtonGroup>
-          <Button  class="search-btn" type="primary"
-                  @click="handleModal()">
-            <span>添加</span>
+          <Button  class="search-btn" type="primary" @click="handleModal()">
+            添加
           </Button>
-        </ButtonGroup>
+          <!--<Button  class="search-btn" type="primary" @click="deleteAllSelected()">
+            批量删除
+          </Button>-->
       </div>
-      <Table border :columns="columns" :data="data" :loading="loading">
+      <Table border :columns="columns" :data="data" :loading="loading" ref="selection" @on-selection-change="handleSelectRow()">
         <template slot="status" slot-scope="{ row }">
           <Badge v-if="row.status===1" status="success" text="启用"/>
           <Badge v-else="" status="error" text="禁用"/>
         </template>
         <template slot="action" slot-scope="{ row }">
-          <a @click="handleModal(row)"
-             :disabled="row.roleCode != 'all' && hasAuthority('systemRoleEdit')?false:true">编辑</a>&nbsp;
-          <Dropdown v-show="hasAuthority('systemRoleEdit')" transfer ref="dropdown" @on-click="handleClick($event,row)">
-            <a href="javascript:void(0)" :disabled="row.roleCode === 'all' ?true:false">
-              <span>更多</span>
-              <Icon type="ios-arrow-down"></Icon>
-            </a>
-            <DropdownMenu slot="list">
-              <DropdownItem name="remove">删除角色</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>&nbsp;
+          <a @click="handleModal(row)">编辑</a>&nbsp;
+          <a @click="deleteRole(row)">删除</a>&nbsp;
         </template>
       </Table>
       <Page transfer :total="pageInfo.total" :current="pageInfo.page" :page-size="pageInfo.limit" show-elevator
@@ -59,33 +50,20 @@
       <div>
         <Tabs @on-click="handleTabClick" :value="current">
           <TabPane label="角色信息" name="form1">
-            <Form v-show="current == 'form1'" ref="form1" :model="formItem" :rules="formItemRules" :label-width="100">
-              <FormItem label="角色标识" prop="roleCode">
-                <Input v-model="formItem.roleCode" placeholder="请输入内容" />
+            <Form v-show="current == 'form1'" ref="form1" :model="formRole" :rules="formItemRules" :label-width="100">
+              <FormItem label="角色编码" prop="roleCode">
+                <Input type="number" v-model="formRole.roleCode" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="角色名称" prop="roleName">
-                <Input v-model="formItem.roleName" placeholder="请输入内容" />
-              </FormItem>
-              <FormItem label="状态">
-                <RadioGroup v-model="formItem.status" type="button">
-                  <Radio label="0">禁用</Radio>
-                  <Radio label="1">启用</Radio>
-                </RadioGroup>
+                <Input v-model="formRole.roleName" placeholder="请输入内容" />
               </FormItem>
               <FormItem label="描述">
-                <Input v-model="formItem.roleDesc" type="textarea" placeholder="请输入内容" />
+                <Input v-model="formRole.description" type="textarea" placeholder="请输入内容" />
               </FormItem>
             </Form>
           </TabPane>
           <TabPane label="分配权限" name="form2">
             <Form v-show="current == 'form2'" ref="form2" :model="formItem" :rules="formItemRules" :label-width="100">
-              <FormItem label="过期时间" prop="expireTime">
-                <Badge v-if="formItem.isExpired" text="授权已过期">
-                  <DatePicker v-model="formItem.expireTime" class="ivu-form-item-error" type="datetime"
-                              placeholder="设置有效期"></DatePicker>
-                </Badge>
-                <DatePicker v-else="" v-model="formItem.expireTime" type="datetime" placeholder="设置有效期"></DatePicker>
-              </FormItem>
               <FormItem label="功能菜单" prop="grantMenus">
                 <tree-table
                   ref="tree"
@@ -96,11 +74,12 @@
                   :tree-type="true"
                   :selectable="true"
                   :columns="columns2"
+                  @on-selection-change="handleSelectRow()"
                   :data="selectMenus">
                   <template slot="operation">
                     <CheckboxGroup v-model="formItem.grantActions">
-                      <Checkbox v-for="(item, index) in actionList" :label="item.authorityId" :key="index">
-                        <span :title="item.actionDesc">{{item.actionName}}</span>
+                      <Checkbox v-for="(item, index) in actionList" :label="item.id" :key="index">
+                        <span :title="item.roleName">{{item.roleName}}</span>
                       </Checkbox>
                     </CheckboxGroup>
                   </template>
@@ -134,9 +113,21 @@
 </template>
 
 <script>
-
-  import {startWith, listConvertTree} from '@/libs/util'
-
+  import {
+    deleteRole,
+    deleteBatch,
+    getUserInfo,
+    getRoleInfo,
+    getRoleList,
+    permissionSave,
+    getPermission,
+    roleSave,
+    roleSelectList,
+    updateRole
+  } from '@/api/role'
+   import {
+    getMenuAllList,
+  } from '@/api/menu'
   export default {
     name: 'SystemRole',
     data () {
@@ -151,6 +142,7 @@
         }
       }
       return {
+        userInfo: JSON.parse(window.localStorage.getItem('userInfo')),
         titles: ['选择接口', '已选择接口'],
         listStyle: {
           width: '240px',
@@ -168,38 +160,45 @@
         ],
         selectApis: [],
         selectMenus: [
-          {id: 1, menuName: 'KKKKey'},
-          {id: 2, menuName: '斤斤计较'}
+          //{id: 1, menuName: 'KKKKey'},
+          //{id: 2, menuName: '斤斤计较'}
         ],
         selectUsers: [],
         pageInfo: {
           total: 0,
           page: 1,
-          limit: 10,
-          roleCode: '',
-          roleName: ''
+          size: 10
         },
         formItemRules: {
           roleCode: [
-            {required: true, validator: validateEn, trigger: 'blur'}
+            {required: true, validator: '请输入角色标识', trigger: 'blur'}
           ],
           roleName: [
             {required: true, message: '角色名称不能为空', trigger: 'blur'}
           ]
         },
         actionList: [
-          {actionDesc: 'aaa',authorityId: 1,actionName: '哈哈哈哈'},
-          {actionDesc: 'aaa',authorityId: 2,actionName: '呵呵呵呵呵'}
+          //{actionDesc: 'aaa',authorityId: 1,actionName: '哈哈哈哈'},
+          //{actionDesc: 'aaa',authorityId: 2,actionName: '呵呵呵呵呵'}
         ],
+        formRole: {
+          roleCode: null,
+          roleName: null,
+          roleType: 1, //默认后台角色
+          description: null,
+          operateUserId: null,
+          userId: null
+        },
         formItem: {
-          roleId: '',
-          roleCode: '',
-          roleName: '',
+          id: null,
+          roleCode: null,
+          roleName: null,
+          roleType: null,
           path: '',
           status: 1,
-          menuId: '',
+          sort: '',
           priority: 0,
-          roleDesc: '',
+          description: '',
           grantMenus: [],
           grantActions: [],
           expireTime: '',
@@ -213,47 +212,23 @@
             align: 'center'
           },
           {
+            title: 'id',
+            key: 'id',
+            width: 300,
+          },
+          {
             title: '角色名称',
             key: 'roleName',
             width: 300,
           },
           {
             title: '角色标识',
-            key: 'roleCode',
-            width: 300,
-          },
-          {
-            title: '状态',
-            slot: 'status',
-            key: 'status',
-            width: 100,
-            filters: [
-              {
-                label: '禁用',
-                value: 0
-              },
-              {
-                label: '启用',
-                value: 1
-              }
-            ],
-            filterMultiple: false,
-            filterMethod (value, row) {
-              if (value === 0) {
-                return row.status === 0
-              } else if (value === 1) {
-                return row.status === 1
-              }
-            }
-          },
-          {
-            title: '最后修改时间',
-            key: 'updateTime',
-            width: 200,
+            key: 'roleCode'
           },
           {
             title: '描述',
-            key: 'roleDesc'
+            key: 'description',
+            width: 200
           },
           {
             title: '操作',
@@ -275,13 +250,14 @@
             minWidth: '200px'
           }
         ],
-        data: []
+        data: [],
+        selectedRowKeys: []
       }
     },
     methods: {
       handleModal (data) {
         if (data) {
-          this.formItem = Object.assign({}, this.formItem, data)
+          this.formRole = Object.assign({}, this.formRole, data)
         }
         if (this.current === this.forms[0]) {
           this.modalTitle = data ? '编辑角色 - ' + data.roleName : '添加角色'
@@ -289,7 +265,7 @@
         }
         if (this.current === this.forms[1]) {
           this.modalTitle = data ? '分配权限 - ' + data.roleName : '分配权限'
-          this.handleLoadRoleGranted(this.formItem.roleId)
+          this.handleLoadRoleGranted()
         }
         if (this.current === this.forms[2]) {
           this.modalTitle = data ? '角色成员 - ' + data.roleName : '角色成员'
@@ -306,12 +282,12 @@
       },
       handleReset () {
         const newData = {
-          roleId: '',
-          roleCode: '',
-          roleName: '',
-          path: '',
-          status: 1,
-          menuId: '',
+          roleCode: null,
+          roleName: null,
+          roleType: 1,
+          description: null,
+          operateUserId: null,
+          userId: null,
           priority: 0,
           roleDesc: '',
           grantMenus: [],
@@ -331,15 +307,48 @@
         this.modalVisible = false
         this.saving = false
       },
+      deleteRole(row) {
+        //删除
+        deleteRole(row.id).then(res => {
+          if(res.code === 200) {
+            this.$Message.success(res.message)
+            this.handleSearch()
+          }
+        })
+      },
+      handleSelectRow() {
+        this.selectedRowKeys = this.$refs.selection.getSelection()
+      },
+      deleteAllSelected () {
+        //批量删除
+        let arr = []
+        if (this.selectedRowKeys.length === 0) {
+          this.$Message.warning('请选择要删除的角色')
+          return false
+        }
+        this.selectedRowKeys.map(item => {
+          arr.push(item.id)
+        })
+        deleteBatch({ids: arr}).then(rs => {
+          if (rs.code === 200) {
+            this.$Message.warning(rs.message)
+            this.handleSearch()
+          }
+        })
+      },
       handleSubmit () {
         if (this.current === this.forms[0]) {
           this.$refs[this.current].validate((valid) => {
             if (valid) {
               this.saving = true
-              if (this.formItem.roleId) {
-                updateRole(this.formItem).then(res => {
-                  if (res.code === 0) {
-                    this.$Message.success('保存成功')
+              if (!this.formRole.id) {
+                const params = Object.assign(this.formRole, {
+                  //userId: this.userInfo.id,
+                  operateUserId: this.userInfo.id
+                })
+                roleSave(this.formRole).then(res => {
+                  if (res.code === 200) {
+                    this.$Message.success(res.message)
                     this.handleReset()
                   }
                   this.handleSearch()
@@ -347,9 +356,9 @@
                   this.saving = false
                 })
               } else {
-                addRole(this.formItem).then(res => {
-                  if (res.code === 0) {
-                    this.$Message.success('保存成功')
+                updateRole(this.formRole).then(res => {
+                  if (res.code === 200) {
+                    this.$Message.success(res.message)
                     this.handleReset()
                   }
                   this.handleSearch()
@@ -364,14 +373,14 @@
         if (this.current === this.forms[1]) {
           this.$refs[this.current].validate((valid) => {
             if (valid) {
-              const authorityIds = this.getCheckedAuthorities()
               this.saving = true
-              grantAuthorityRole({
-                roleId: this.formItem.roleId,
-                expireTime: this.formItem.expireTime ? this.formItem.expireTime.pattern('yyyy-MM-dd HH:mm:ss') : '',
-                authorityIds: authorityIds
-              }).then(res => {
-                if (res.code === 0) {
+              const params = {
+                id: this.formItem.grantActions.join(''), //角色id
+                ids: this.formItem.grantMenus
+              }
+              console.log(params)
+              permissionSave(params).then(res => {
+                if (res.code === 200) {
                   this.$Message.success('授权成功')
                   this.handleReset()
                 }
@@ -403,14 +412,13 @@
           })
         }
       },
-      handleSearch (page) {
-        if (page) {
-          this.pageInfo.page = page
-        }
+      handleSearch () {
         this.loading = true
-        getRoles(this.pageInfo).then(res => {
-          this.data = res.data.records
-          this.pageInfo.total = parseInt(res.data.total)
+        getRoleList(this.pageInfo).then(res => {
+          if (res.code === 200) {
+            this.data = res.data.records
+            this.pageInfo.total = parseInt(res.data.total)
+          }
         }).finally(() => {
           this.loading = false
         })
@@ -441,50 +449,53 @@
         const menus = this.$refs['tree'].getCheckedProp('authorityId')
         return menus.concat(this.formItem.grantActions)
       },
-      handleLoadRoleGranted (roleId) {
-        if (!roleId) {
-          return
-        }
+      handleLoadRoleGranted () {
+        //if (!roleId) {
+         // return
+        //}
+        
         const that = this
-        const p1 = getAuthorityMenu()
-        const p2 = getAuthorityRole(roleId)
+        const p1 = getMenuAllList()
+        const p2 = roleSelectList()
         Promise.all([p1, p2]).then(function (values) {
           let res1 = values[0]
           let res2 = values[1]
-          if (res1.code === 0 && res1.data) {
-            let opt = {
+          if (res1.code === 200) {
+            /*let opt = {
               primaryKey: 'menuId',
               parentKey: 'parentId',
               startPid: '0'
-            }
-            if (res2.code === 0 && res2.data && res2.data.length > 0) {
+            }*/
+            let menus = []
+            /*if (res2.code === 200) {
               let menus = []
               let actions = []
-              res2.data.map(item => {
+              console.log(res2.data)
+              res2.data.records.map(item => {
                 // 菜单权限
-                if (item.authority.indexOf('MENU_') != -1 && !menus.includes(item.authorityId)) {
-                  menus.push(item.authorityId)
+                if (item.authority.indexOf('MENU_') != -1 && !menus.includes(item.id)) {
+                  menus.push(item.id)
                 }
                 // 操作权限
-                if (item.authority.indexOf('ACTION_') != -1 && !actions.includes(item.authorityId)) {
-                  actions.push(item.authorityId)
+                if (item.authority.indexOf('ACTION_') != -1 && !actions.includes(item.id)) {
+                  actions.push(item.id)
                 }
               })
               that.formItem.grantMenus = menus;
               that.formItem.grantActions = actions;
-              // 时间
-              if (res2.data.length > 0) {
-                that.formItem.expireTime = res2.data[0].expireTime
-                that.formItem.isExpired = res2.data[0].isExpired
-              }
-            }
-            res1.data.map(item => {
+            }*/
+            res1.data.records.map(item => {
+              menus.push(item.id)
+            })
+            that.formItem.grantMenus = menus;
+            res1.data.records.map(item => {
               // 菜单选中
-              if (that.formItem.grantMenus.includes(item.authorityId)) {
+              if (that.formItem.grantMenus.includes(item.id)) {
                 item._isChecked = true
               }
             })
-            that.selectMenus = listConvertTree(res1.data, opt)
+            that.selectMenus = res1.data.records //listConvertTree(res1.data.records, opt)
+            that.actionList = res2.data
           }
           that.modalVisible = true
         })
@@ -533,7 +544,7 @@
       }
     },
     mounted: function () {
-      //this.handleSearch()
+      this.handleSearch()
       //console.log(this.actionList)
     }
   }

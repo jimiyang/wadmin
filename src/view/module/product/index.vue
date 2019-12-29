@@ -47,7 +47,7 @@
 				  class: 'op',
 				  on: {
 					click: () => {
-					  console.log('edit', params)
+					  //console.log('edit', params)
 					}
 				  }
 				}, '编辑'),
@@ -59,7 +59,7 @@
 				  class: 'op',
 				  on: {
 					click: () => {
-					  console.log('del', params)
+					  //console.log('del', params)
 					}
 				  }
 				}, '删除')

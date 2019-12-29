@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <Row :gutter="8">
-      <Col :xs="8" :sm="8" :md="8" :lg="6">
+  <div class="menu">
+    <Row :gutter="12">
+      <Col :xs="13" :sm="13" :md="14" :lg="14">
         <Card shadow>
-          <tree-table style="max-height:700px;overflow: auto"
+          <!--<tree-table style="max-height:700px;overflow: auto"
               expand-key="menuName"
               @radio-click="rowClick"
               :expand-type="false"
@@ -16,8 +16,15 @@
               <Badge v-if="scope.row.status===1" status="success"/>
               <Badge v-else="" status="error"/>
               <Icon :type="scope.row.icon" size="16"/>
+              <a>ddd</a>
             </template>
-          </tree-table>
+          </tree-table>-->
+          <Table border :columns="columns" :data="data">
+            <template slot="action" slot-scope="{ row }">
+              <a @click="handleEdit(row)">编辑</a>&nbsp;
+              <a @click="deleteRole(row)">删除</a>&nbsp;
+            </template>
+          </Table>
         </Card>
       </Col>
       <Col :xs="16" :sm="16" :md="16" :lg="10">
@@ -25,9 +32,6 @@
         <div class="search-con search-con-top">
           <ButtonGroup>
             <Button type="primary"  @click="setEnabled(true)">添加
-            </Button>
-            <Button type="primary"
-                    @click="confirmModal = true">删除
             </Button>
           </ButtonGroup>
           <Modal
@@ -40,59 +44,49 @@
           </Modal>
         </div>
         <Form ref="menuForm" :model="formItem" :rules="formItemRules" :label-width="80">
-          <FormItem label="上级菜单" prop="parentId">
+          <FormItem label="上级菜单" prop="pid">
             <treeselect
-              v-model="formItem.parentId"
               :options="selectTreeData"
-              :default-expand-level="1"
-              :normalizer="treeSelectNormalizer"/>
+              placeholder="请选择一级菜单"
+              v-model="formItem.pid"
+              :normalizer="treeSelectNormalizer"
+            />
+            <!--<pre class="result">{{ formItem.pid }}</pre>-->
           </FormItem>
-          <FormItem label="菜单标识" prop="menuCode">
+          <FormItem label="菜单编码" prop="menuCode">
             <Input v-model="formItem.menuCode" placeholder="请输入内容" />
           </FormItem>
           <FormItem label="菜单名称" prop="menuName">
             <Input v-model="formItem.menuName" placeholder="请输入内容" />
           </FormItem>
-          <FormItem label="页面地址" prop="path">
-            <Input v-model="formItem.path" placeholder="请输入内容" />
-            <Select v-model="formItem.scheme" slot="prepend" style="width: 80px">
-              <Option value="/">/</Option>
-              <Option value="http://">http://</Option>
-              <Option value="https://">https://</Option>
-            </Select>
-            <Select v-model="formItem.target" slot="append" style="width: 100px">
-              <Option value="_self">窗口内打开</Option>
-              <Option :disabled="formItem.scheme==='/'" value="_blank">新窗口打开</Option>
-            </Select>
-            <span v-if="formItem.scheme === '/'">前端组件：/view/module/{{formItem.path}}.vue</span>
-            <span v-else="">跳转地址：{{formItem.scheme}}{{formItem.path}}</span>
+          <FormItem label="页面地址" prop="menuPath">
+            <Input v-model="formItem.menuPath" placeholder="请输入内容" />
+            <span v-if="formItem.scheme === '/'">前端组件：/view/module/{{formItem.menuPath}}.vue</span>
           </FormItem>
-          <FormItem label="图标">
-            <Input v-model="formItem.icon" placeholder="请输入内容" />
-            <Icon size="22" :type="formItem.icon" slot="prepend"/>
-            <Poptip width="600" slot="append" placement="bottom">
-              <Button icon="ios-search"></Button>
-              <div slot="content">
-                <ul class="icons">
-                  <li class="icons-item" :title="item" @click="onIconClick(item)" v-for="(item, index) in selectIcons" :key="index">
-                    <Icon :type="item" size="28"/>
-                    <p>{{item}}</p>
-                  </li>
-                </ul>
-              </div>
-            </Poptip>
+           <FormItem label="图标">
+            <Input v-model="formItem.iconPath" placeholder="请输入内容">
+              <Icon size="22" :type="formItem.iconPath" slot="prepend"/>
+              <Poptip width="600" slot="append" placement="bottom">
+                <Button icon="ios-search"></Button>
+                <div slot="content">
+                  <ul class="icons">
+                    <li class="icons-item" :title="item" @click="onIconClick(item)" v-for="(item, index) in selectIcons" :key="index">
+                      <Icon :type="item" size="28"/>
+                      <p>{{item}}</p>
+                    </li>
+                  </ul>
+                </div>
+              </Poptip>
+            </Input>
           </FormItem>
           <FormItem label="优先级">
-            <InputNumber v-model="formItem.priority"></InputNumber>
+            <InputNumber v-model="formItem.sort"></InputNumber>
           </FormItem>
           <FormItem label="状态">
             <RadioGroup v-model="formItem.status" type="button">
-              <Radio label="0">禁用</Radio>
-              <Radio label="1">启用</Radio>
+              <Radio :label="0">禁用</Radio>
+              <Radio :label="1">启用</Radio>
             </RadioGroup>
-          </FormItem>
-          <FormItem label="描述">
-            <Input v-model="formItem.menuDesc" type="textarea" placeholder="请输入内容"></Input>
           </FormItem>
           <FormItem>
             <Button @click="handleSubmit" :loading="saving" type="primary">保存</Button>
@@ -101,21 +95,26 @@
         </Form>
       </Card>
       </Col>
-      <Col :xs="16" :sm="16" :md="16" :lg="8">
-        <Card shadow>
-          <menu-action :value="formItem"></menu-action>
-        </Card>
-      </Col>
     </Row>
   </div>
 </template>
-
 <script>
   import {listConvertTree, updateTreeNode} from '@/libs/util'
-  //import {getMenus, updateMenu, addMenu, removeMenu} from '@/api/menu'
+  import {
+    deleteMenu,
+    delBatchMenu,
+    getUserInfo,
+    getMenuId,
+    getMenuList,
+    getMenuAllList,
+    savePermissionMenu,
+    getPermissionId,
+    saveMenu,
+    updateMenu
+  } from '@/api/menu'
+
   import MenuAction from './menu-action.vue'
   import icons from './icons'
-
   export default {
     name: 'SystemMenu',
     components: {
@@ -138,13 +137,10 @@
         visible: false,
         selectIcons: icons,
         selectTreeData: [{
-          menuId: 0,
+          id: 0,
           menuName: '无'
         }],
         formItemRules: {
-          parentId: [
-            {required: true, message: '上级菜单', trigger: 'blur'}
-          ],
           menuCode: [
             {required: true, validator: validateEn, trigger: 'blur'}
           ],
@@ -152,46 +148,73 @@
             {required: true, message: '菜单名称不能为空', trigger: 'blur'}
           ]
         },
+        search: {
+          name: null
+        },
         formItem: {
-          menuId: '',
-          menuCode: '',
+          menuCode: null,
           menuName: '',
-          icon: 'md-document',
-          path: '',
-          scheme: '/',
+          iconPath: 'md-document',
+          menuPath: null,
           target: '_self',
-          status: 1,
-          parentId: '0',
-          priority: 0,
-          menuDesc: ''
+          status: 0,
+          operateUserId: null,
+          pid: 0,
+          type: 0
         },
         columns: [
           {
             title: '菜单名称',
             key: 'menuName',
-            minWidth: '200px'
           },
           {
-            title: '状态',
-            key: 'status',
-            type: 'template',
-            minWidth: '100px',
-            template: 'status'
-          },
+            title: '操作',
+            slot: 'action',
+            width: 150
+          }
         ],
         data: []
       }
     },
     methods: {
+      handleEdit(row) {
+        this.formItem = row
+      },
+      deleteRole(row) {
+        deleteMenu(row.id).then(res => {
+          if(res.code === 200) {
+            this.$Message.success(res.message)
+            this.handleSearch()
+          }
+        })
+      },
       treeSelectNormalizer (node) {
         return {
-          id: node.menuId,
+          id: node.id,
           label: node.menuName,
           children: node.children
         }
       },
       setSelectTree (data) {
+        let arr = [], child = []
+        data.map(item => {
+          console.log(Number(item.pid))
+          if(Number(item.pid) === 0){
+            arr.push({item})
+            console.log(arr)
+          }
+        })
+         console.log(arr)
+        arr.map((item, index) => {
+          data.map(it => {
+            if (item.id === it.pid) {
+              arr[i].children.push({it})
+            }
+          })
+        })
+        //console.log(arr)
         this.selectTreeData = data
+        //console.log(this.selectTreeData)
       },
       setEnabled (enabled) {
         if (enabled) {
@@ -207,17 +230,15 @@
       },
       handleReset () {
         const newData = {
-          menuId: '',
-          menuCode: '',
+          menuCode: null,
           menuName: '',
-          icon: 'md-document',
-          path: '',
-          scheme: '/',
+          iconPath: 'md-document',
+          menuPath: null,
           target: '_self',
-          status: '1',
-          parentId: '0',
-          priority: 0,
-          menuDesc: ''
+          status: 0,
+          operateUserId: null,
+          pid: 0,
+          type: 0
         }
         this.formItem = newData
         this.$refs['menuForm'].resetFields()
@@ -227,20 +248,22 @@
         this.$refs['menuForm'].validate((valid) => {
           if (valid) {
             this.saving = true
-            if (this.formItem.menuId) {
-              updateMenu(this.formItem).then(res => {
-                if (res.code === 0) {
-                  this.$Message.success('保存成功')
+            if (!this.formItem.id) {
+              saveMenu(this.formItem).then(res => {
+                if (res.code === 200) {
+                  this.$Message.success(res.message)
                 }
                 this.handleSearch()
+                this.getMenuList() //加载菜单树
               }).finally(() => {
                 this.saving = false
               })
             } else {
-              addMenu(this.formItem).then(res => {
-                if (res.code === 0) {
-                  this.$Message.success('保存成功')
+              updateMenu(this.formItem).then(res => {
+                if (res.code === 200) {
+                  this.$Message.success(res.message)
                 }
+                this.getMenuList() //加载菜单树
                 this.handleSearch()
               }).finally(() => {
                 this.saving = false
@@ -259,26 +282,34 @@
         })
       },
       onIconClick (item) {
-        this.formItem.icon = item
+        this.formItem.iconPath = item
+      },
+      getMenuList () {
+        //菜单树
+        getMenuList(this.search).then(res => {
+          if (res.code === 200) {
+            this.setSelectTree(this.data)
+          }
+        })
       },
       handleSearch () {
-        getMenus().then(res => {
-          let opt = {
-            primaryKey: 'menuId',
-            parentKey: 'parentId',
-            startPid: '0'
+        getMenuAllList(this.search).then(res => {
+          if (res.code === 200) {
+            this.data = res.data.records
           }
-          this.data = listConvertTree(res.data, opt)
-          this.setSelectTree(this.data)
         })
       }
     },
     mounted: function () {
-      //this.handleSearch()
+      this.getMenuList() //加载菜单树
+      this.handleSearch()
     }
   }
 </script>
 <style>
+ .menu{
+  padding: 20px;
+ }
   .icons {
     overflow: auto;
     zoom: 1;

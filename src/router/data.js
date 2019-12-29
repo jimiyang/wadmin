@@ -20,14 +20,14 @@ export default [
 				name: '系统用户'
 			},
 			{
-				type: 'md-menu',
-				urlPath: '/system',
-				name: '菜单资源',
-			},
-			{
 				type: 'ios-folder',
 				urlPath: 'role',
 				name: '角色信息'
+			},
+			{
+				type: 'md-menu',
+				urlPath: '/system',
+				name: '菜单资源',
 			},
 			{
 				type: 'logo-xbox',

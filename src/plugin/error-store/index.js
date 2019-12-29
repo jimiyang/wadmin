@@ -10,7 +10,7 @@ export default {
         url: window.location.href
       }
       Vue.nextTick(() => {
-        console.error(error)
+        //console.error(error)
        // store.dispatch('addErrorLog', info)
       })
     }

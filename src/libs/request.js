@@ -82,16 +82,6 @@ service.interceptors.response.use(
 )
 export default {
 	post(url, data, header) {
-		/*let form = null
-		switch(url) {
-			case 'check/picVerify':
-			break
-			default:
-			  const token = window.localStorage.getItem('token')
-			  form = data !== undefined ? Object.assign(data, {token}) : {token}
-			break
-		}
-		console.log(form)*/
 		return service({
 			method: 'post',
       url,
@@ -109,7 +99,6 @@ export default {
 		return service({
 			method: 'get',
       url: url + '/' + data,
-      //data: qs.stringify(data)
 		})
   },
   delete(url, data) {
