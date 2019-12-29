@@ -29,6 +29,7 @@ const LOGIN_PAGE_NAME = 'login'
 router.beforeEach((to, from, next) => {
   const token = getToken() //window.localStorage.getItem('token')
   console.log('进入路由',to)
+  
   if (!to.meta.name || to.meta.requireAuth) { // 判断该路由是否需要登录权限
     if (token) { // 通过vuex state获取当前的token是否存在
 	    if (!dyncRouters || dyncRouters.length === 0) {

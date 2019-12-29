@@ -21,7 +21,10 @@ const service = axios.create({
   // api的base_url
   baseURL: baseUrl,
   // 设置请求超时时间30s
-  timeout: 30000
+  timeout: 30000,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+  },
 })
 service.apiUrl = baseUrl
 /**
